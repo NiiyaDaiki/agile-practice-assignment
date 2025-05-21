@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 
 interface Props {
   params: { id: string };
@@ -42,9 +43,12 @@ export default async function ViewAssignmentPage({ params }: Props) {
         </span>
       </p>
       <div className="flex space-x-4">
-        <a href="/" className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+        <Link
+          href="/"
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
           一覧へ戻る
-        </a>
+        </Link>
       </div>
     </div>
   );

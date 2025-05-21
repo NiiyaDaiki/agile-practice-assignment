@@ -9,7 +9,8 @@
     "lint": "next lint",
     "prisma:migrate:init": "dotenv -e .env.local -- prisma migrate dev --name init",
     "prisma:migrate": "dotenv -e .env.local -- prisma migrate dev",
-    "prisma:deploy": "dotenv -e .env.local -- prisma migrate deploy"
+    "prisma:deploy": "dotenv -e .env.local -- prisma migrate deploy",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@auth/prisma-adapter": "2.7.4",
