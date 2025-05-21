@@ -9,7 +9,6 @@ export default async function AssignmentsPage() {
 
   // サーバーで一度だけ取得
   const list = await prisma.assignment.findMany({
-    where: { authorId: session.user.id },
     orderBy: { title: "asc" },
     select: {
       id: true,

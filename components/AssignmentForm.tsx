@@ -19,8 +19,8 @@ import { Button } from "@/components/ui/button";
 
 const schema = z.object({
   id: z.string().optional(),
-  title: z.string().min(1, "タイトルは必須"),
-  content: z.string().min(1, "内容は必須"),
+  title: z.string().trim().min(1, "タイトルは必須"),
+  content: z.string().trim().min(1, "内容は必須"),
   isPublic: z.boolean().optional(),
 });
 

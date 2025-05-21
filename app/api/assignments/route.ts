@@ -6,8 +6,8 @@ import { z } from "zod";
 
 const assignmentSchema = z.object({
   id: z.string().optional(),
-  title: z.string().min(1),
-  content: z.string().min(1),
+  title: z.string().trim().min(1),
+  content: z.string().trim().min(1),
   isPublic: z.boolean().optional(),
 });
 
@@ -35,7 +35,7 @@ export async function PUT(req: Request) {
   const data = assignmentSchema.parse(await req.json());
   if (!data.id) return NextResponse.json({ error: "ID required" }, { status: 400 });
   const assignment = await prisma.assignment.update({
-    where: { id: data.id, authorId: session?.user?.id, },
+    where: { id: data.id, },
     data: {
       title: data.title,
       content: data.content,

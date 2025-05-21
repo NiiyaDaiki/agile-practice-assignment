@@ -15,7 +15,7 @@ export default async function ViewAssignmentPage({ params }: Props) {
   }
 
   const assignment = await prisma.assignment.findFirst({
-    where: { id: (await params).id, authorId: session.user.id },
+    where: { id: (await params).id },
   });
   if (!assignment) {
     redirect("/admin/assignments");

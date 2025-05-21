@@ -13,7 +13,7 @@ export default async function EditAssignmentPage({ params }: Props) {
   if (!session) redirect("/signin");
 
   const assignment = await prisma.assignment.findFirst({
-    where: { id, authorId: session?.user?.id },
+    where: { id },
   });
   if (!assignment) redirect("/admin/assignments");
 
