@@ -4,15 +4,16 @@ import { redirect } from "next/navigation";
 import { AssignmentForm } from "@/components/AssignmentForm";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function EditAssignmentPage({ params }: Props) {
+  const { id } = await params;
   const session = await auth();
   if (!session) redirect("/signin");
 
   const assignment = await prisma.assignment.findFirst({
-    where: { id: params.id, authorId: session?.user?.id },
+    where: { id, authorId: session?.user?.id },
   });
   if (!assignment) redirect("/admin/assignments");
 

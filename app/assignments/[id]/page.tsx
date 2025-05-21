@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function ViewAssignmentPage({ params }: Props) {
@@ -15,7 +15,7 @@ export default async function ViewAssignmentPage({ params }: Props) {
   }
 
   const assignment = await prisma.assignment.findFirst({
-    where: { id: params.id, authorId: session.user.id },
+    where: { id: (await params).id, authorId: session.user.id },
   });
   if (!assignment) {
     redirect("/admin/assignments");
