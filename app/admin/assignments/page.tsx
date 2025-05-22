@@ -13,17 +13,20 @@ export default async function AssignmentsPage() {
     select: {
       id: true,
       title: true,
-      createdAt: true,
       isPublic: true,
+      assignmentProgress: {
+        where: { userId: session.user.id },
+        select: { status: true },
+      },
     },
   });
 
   // Date → ISO 文字列に変換してクライアントへ
-  const initialAssignments: Assignment[] = list.map((a) => ({
+  const initialAssignments = list.map((a) => ({
     id: a.id,
     title: a.title,
-    createdAt: a.createdAt.toISOString(),
     isPublic: a.isPublic,
+    status: a.assignmentProgress[0]?.status ?? "NOT_STARTED",
   }));
 
   return <AssignmentsList initialAssignments={initialAssignments} />;

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import ProgressSelect from "@/components/ProgressSelect";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -20,6 +21,16 @@ export default async function ViewAssignmentPage({ params }: Props) {
   if (!assignment) {
     redirect("/admin/assignments");
   }
+
+  const progress = await prisma.assignmentProgress.findUnique({
+    where: {
+      userId_assignmentId: {
+        userId: session.user.id,
+        assignmentId: (await params).id,
+      },
+    },
+  });
+  const currentStatus = progress?.status ?? "NOT_STARTED";
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-4">
@@ -42,6 +53,10 @@ export default async function ViewAssignmentPage({ params }: Props) {
           {assignment.isPublic ? "公開中" : "非公開"}
         </span>
       </p>
+      <ProgressSelect
+        assignmentId={(await params).id}
+        initialStatus={currentStatus}
+      />
       <div className="flex space-x-4">
         <Link
           href="/"

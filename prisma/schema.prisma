@@ -29,6 +29,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   assignments   Assignment[]
+
+  assignmentProgress AssignmentProgress[]
 }
 
 model Assignment {
@@ -40,7 +42,28 @@ model Assignment {
   updatedAt DateTime @updatedAt
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
+
+  assignmentProgress AssignmentProgress[]
 }
+
+enum ProgressStatus {
+  NOT_STARTED   // 未着手
+  IN_PROGRESS   // 着手中
+  IN_REVIEW     // レビュー中
+  DONE          // 完了
+}
+
+model AssignmentProgress {
+  userId       String
+  assignmentId String
+  status       ProgressStatus @default(NOT_STARTED)
+  updatedAt    DateTime        @updatedAt
+  
+  user         User       @relation(fields: [userId], references: [id])
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  @@id([userId, assignmentId])
+}
+
 
 model Account {
   userId            String

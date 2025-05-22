@@ -3,16 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 
-export interface Assignment {
+export type Assignment = {
   id: string;
   title: string;
-  createdAt: string;
   isPublic: boolean;
-}
+  status: keyof typeof statusLabel;
+};
 
-interface Props {
+const statusLabel = {
+  NOT_STARTED: "未着手",
+  IN_PROGRESS: "着手中",
+  IN_REVIEW: "レビュー中",
+  DONE: "完了",
+} as const;
+
+type Props = {
   initialAssignments: Assignment[];
-}
+};
 
 export default function AssignmentsList({ initialAssignments }: Props) {
   const [assignments, setAssignments] = useState(initialAssignments);
