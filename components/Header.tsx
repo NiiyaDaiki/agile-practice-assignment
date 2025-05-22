@@ -1,45 +1,54 @@
 "use client";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { SignOutButton } from "./SignOutButton";
-import Link from "next/link";
 import Logo from "@/public/logo.png";
-import Image from "next/image";
 
 export function Header() {
   const { data: session, status } = useSession();
+  const pathname = usePathname(); // ★ 現在のパスを取得
+  const inAdmin = pathname.startsWith("/admin");
 
   if (status === "loading") {
     return (
-      <header className="h-20 p-4 flex items-center bg-green-200 text-black shadow">
+      <header className="p-4 bg-black text-white">
         <p>Loading...</p>
       </header>
     );
   }
 
   return (
-    <header className="h-20 p-4 flex justify-between items-center bg-green-200 text-black shadow">
+    <header className="p-4 flex justify-between items-center bg-black text-white">
+      {/* -------- 左側：ブランド＆（必要に応じて）管理メニュー -------- */}
       <nav className="flex items-center space-x-6">
-        {/* ブランドロゴ／TOP ページ */}
         <Link href="/" className="flex items-center hover:opacity-80">
-          <Image
-            src={Logo}
-            alt="Agile Practice Assignment Logo"
-            width={60}
-            height={60}
-          />
+          <Image src={Logo} alt="APA Logo" width={40} height={40} />
+          <span className="ml-2 font-bold text-xl">
+            Agile Practice Assignment
+          </span>
         </Link>
 
-        {/* ログイン済みユーザー向け：課題編集ページへのリンク */}
-        {/* {session && (
-          <Link
-            href="/assignments"
-            className="hover:underline hover:text-gray-500"
-          >
-            課題編集
-          </Link>
-        )} */}
+        {inAdmin && (
+          <>
+            <Link
+              href="/admin/assignments"
+              className="hover:underline hover:text-gray-300"
+            >
+              課題編集
+            </Link>
+            <Link
+              href="/admin/progress"
+              className="hover:underline hover:text-gray-300"
+            >
+              進捗一覧
+            </Link>
+          </>
+        )}
       </nav>
 
+      {/* -------- 右側：サインイン／アウト -------- */}
       <div>
         {session ? (
           <SignOutButton />
