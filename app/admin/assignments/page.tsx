@@ -1,7 +1,6 @@
-// app/assignments/page.tsx
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import AssignmentsList, { Assignment } from "@/components/AssignmentsList";
+import AssignmentsList from "@/components/AssignmentsList";
 
 export default async function AssignmentsPage() {
   const session = await auth();
@@ -26,7 +25,6 @@ export default async function AssignmentsPage() {
     id: a.id,
     title: a.title,
     isPublic: a.isPublic,
-    status: a.assignmentProgress[0]?.status ?? "NOT_STARTED",
   }));
 
   return <AssignmentsList initialAssignments={initialAssignments} />;

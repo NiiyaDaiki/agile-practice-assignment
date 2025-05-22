@@ -10,7 +10,7 @@ export default async function AdminProgressPage() {
   /* 課題一覧 */
   const assignments = await prisma.assignment.findMany({
     select: { id: true, title: true },
-    orderBy: { createdAt: "asc" },
+    orderBy: { title: "asc" },
   });
 
   /* 全ユーザー＋進捗 */

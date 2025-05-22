@@ -22,7 +22,7 @@ export async function DELETE(_req: Request, { params }: Params) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.error();
   await prisma.assignment.deleteMany({
-    where: { id: (await (params)).id, authorId: session.user.id },
+    where: { id: (await (params)).id },
   });
   return NextResponse.json({ id: (await (params)).id });
 }
