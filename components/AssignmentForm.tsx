@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import MarkdownPreview from "@/components/MarkdownPreview";
 
 const schema = z.object({
   id: z.string().optional(),
@@ -62,19 +63,30 @@ export function AssignmentForm({ initial }: { initial?: FormValues }) {
             </FormItem>
           )}
         />
+        {/* <div className="flex "> */}
         <FormField
           control={form.control}
           name="content"
           render={({ field }) => (
             <FormItem>
               <FormLabel>内容</FormLabel>
-              <FormControl>
-                <Textarea {...field} rows={5} placeholder="課題詳細" />
-              </FormControl>
+              <div className="grid grid-cols-2 gap-2 max-h-[36rem]">
+                {/* Markdown 入力エリア */}
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    placeholder="markdown形式で記述できます"
+                  />
+                </FormControl>
+
+                {/* プレビュー：フォームの値を watch でリアルタイム反映 */}
+                <MarkdownPreview value={form.watch("content")} />
+              </div>
               <FormMessage />
             </FormItem>
           )}
         />
+        {/* </div> */}
         <FormField
           control={form.control}
           name="isPublic"

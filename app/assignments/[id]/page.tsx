@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import ProgressSelect from "@/components/ProgressSelect";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -38,8 +40,10 @@ export default async function ViewAssignmentPage({ params }: Props) {
       <p className="text-sm text-gray-500">
         最終更新: {new Date(assignment.updatedAt).toLocaleString()}
       </p>
-      <div className="prose">
-        <p>{assignment.content}</p>
+      <div className="prose  rounded-sm border border-gray-200">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {assignment.content}
+        </ReactMarkdown>
       </div>
       <p>
         ステータス:{" "}
