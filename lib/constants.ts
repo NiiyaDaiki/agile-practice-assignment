@@ -26,3 +26,7 @@ export const REQUEST_STATUS_LABEL = {
   APPROVED: "承認済み",
   REJECTED: "却下",
 } as const;
+
+export type MembershipStatus = keyof typeof MEMBERSHIP_LABEL;
+export type RequestType = keyof typeof REQUEST_TYPE_LABEL;
+export type RequestStatus = keyof typeof REQUEST_STATUS_LABEL;
