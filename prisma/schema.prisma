@@ -87,6 +87,7 @@ enum MembershipStatus {
 enum RequestType {
   PAUSE
   WITHDRAW
+  RESUME
 }
 
 enum RequestStatus {

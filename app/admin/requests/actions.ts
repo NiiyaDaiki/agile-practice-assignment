@@ -6,13 +6,18 @@ import { z } from "zod";
 const ApproveRequestSchema = z.object({
   id: z.string().cuid(),
   userId: z.string().cuid(),
-  type: z.enum(["PAUSE", "WITHDRAW"]),
+  type: z.enum(["PAUSE", "WITHDRAW", "RESUME"]),
 });
 
 export async function approve(formData: FormData) {
   const { id, type, userId } = ApproveRequestSchema.parse(
     Object.fromEntries(formData)
   );
+
+  const newUserStatus =
+    type === "PAUSE" ? "PAUSED" :
+      type === "RESUME" ? "ACTIVE" :
+        "WITHDRAWN";
 
   await prisma.$transaction([
     prisma.userRequest.update({
@@ -21,7 +26,7 @@ export async function approve(formData: FormData) {
     }),
     prisma.user.update({
       where: { id: userId },
-      data: { status: type === "PAUSE" ? "PAUSED" : "WITHDRAWN" },
+      data: { status: newUserStatus },
     }),
   ]);
 

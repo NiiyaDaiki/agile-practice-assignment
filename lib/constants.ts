@@ -19,6 +19,7 @@ export const MEMBERSHIP_LABEL = {
 export const REQUEST_TYPE_LABEL = {
   PAUSE: "休会",
   WITHDRAW: "退会",
+  RESUME: "復帰",
 } as const;
 
 export const REQUEST_STATUS_LABEL = {

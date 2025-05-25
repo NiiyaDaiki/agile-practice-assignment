@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import PublicAssignments from "@/components/PublicAssignments";
+import PausedBanner from "@/components/PausedBanner";
 
 export default async function HomePage() {
   const session = await auth();
@@ -23,6 +24,21 @@ export default async function HomePage() {
         </div>
       </div>
     );
+  }
+
+  /* ユーザーステータス確認 */
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { status: true },
+  });
+
+  if (user?.status === "PAUSED") {
+    const pendingResume = await prisma.userRequest.findFirst({
+      where: { userId: session.user.id, type: "RESUME", status: "PENDING" },
+    });
+    return (
+      <PausedBanner userId={session.user.id} waiting={Boolean(pendingResume)} />
+    ); // 休会中UI
   }
 
   // ログイン済みなら公開課題一覧を表示
