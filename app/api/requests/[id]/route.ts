@@ -3,14 +3,14 @@ import { prisma } from "@/lib/prisma";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { status } = await req.json(); // "APPROVED" | "REJECTED"
   if (!["APPROVED", "REJECTED"].includes(status))
     return NextResponse.json("Invalid", { status: 400 });
 
   const request = await prisma.userRequest.update({
-    where: { id: params.id },
+    where: { id: (await (params)).id },
     data: {
       status,
       actedAt: new Date(),

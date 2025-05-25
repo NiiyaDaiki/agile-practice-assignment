@@ -1,11 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import {
-  MEMBERSHIP_LABEL,
-  REQUEST_STATUS_LABEL,
-  REQUEST_TYPE_LABEL,
-} from "@/lib/constants";
+import { REQUEST_STATUS_LABEL, REQUEST_TYPE_LABEL } from "@/lib/constants";
 
 export default async function AdminRequestsPage() {
   const session = await auth();
