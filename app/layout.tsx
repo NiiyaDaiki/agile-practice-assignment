@@ -1,6 +1,7 @@
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import { Header } from "@/components/Header";
+import QueryProvider from "@/lib/providers/QueryClientProvider";
 
 export default function RootLayout({
   children,
@@ -10,10 +11,12 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body>
-        <SessionProvider>
-          <Header />
-          {children}
-        </SessionProvider>
+        <QueryProvider>
+          <SessionProvider>
+            <Header />
+            {children}
+          </SessionProvider>
+        </QueryProvider>
       </body>
     </html>
   );

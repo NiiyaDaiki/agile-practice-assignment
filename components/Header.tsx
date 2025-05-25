@@ -5,21 +5,26 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { SignOutButton } from "./SignOutButton";
 import Logo from "@/public/logo.png";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchCount = async () =>
+  (await fetch("/api/requests/pending-count")).json() as Promise<{
+    count: number;
+  }>;
 
 export function Header() {
   const { data: session, status } = useSession();
   const pathname = usePathname(); // ★ 現在のパスを取得
   const inAdmin = pathname.startsWith("/admin");
 
-  const [pendingCount, setCount] = useState(0);
-  useEffect(() => {
-    if (inAdmin) {
-      fetch("/api/requests?status=PENDING")
-        .then((r) => r.json())
-        .then((data) => setCount(data.length));
-    }
-  }, [inAdmin]);
+  const { data } = useQuery({
+    queryKey: ["pending-count"],
+    queryFn: fetchCount,
+    enabled: inAdmin, // 管理画面中のみ
+    staleTime: 30_000, // 30 秒キャッシュ
+  });
+
+  const pendingRequestCount = data?.count ?? 0;
 
   if (status === "loading") {
     return (
@@ -56,9 +61,9 @@ export function Header() {
             </Link>
             <Link href="/admin/requests" className="relative">
               リクエスト
-              {pendingCount > 0 && (
+              {pendingRequestCount > 0 && (
                 <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
-                  {pendingCount}
+                  {pendingRequestCount}
                 </span>
               )}
             </Link>
