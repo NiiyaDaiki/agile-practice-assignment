@@ -5,11 +5,21 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { SignOutButton } from "./SignOutButton";
 import Logo from "@/public/logo.png";
+import { useEffect, useState } from "react";
 
 export function Header() {
   const { data: session, status } = useSession();
   const pathname = usePathname(); // ★ 現在のパスを取得
   const inAdmin = pathname.startsWith("/admin");
+
+  const [pendingCount, setCount] = useState(0);
+  useEffect(() => {
+    if (inAdmin) {
+      fetch("/api/requests?status=PENDING")
+        .then((r) => r.json())
+        .then((data) => setCount(data.length));
+    }
+  }, [inAdmin]);
 
   if (status === "loading") {
     return (
@@ -44,7 +54,23 @@ export function Header() {
             >
               進捗一覧
             </Link>
+            <Link href="/admin/requests" className="relative">
+              リクエスト
+              {pendingCount > 0 && (
+                <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
+                  {pendingCount}
+                </span>
+              )}
+            </Link>
           </>
+        )}
+        {session && !inAdmin && (
+          <Link
+            href="/settings"
+            className="hover:underline hover:text-gray-300"
+          >
+            設定
+          </Link>
         )}
       </nav>
 

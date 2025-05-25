@@ -1,4 +1,3 @@
-// lib/constants.ts
 export const STATUS_INFO = {
   NOT_STARTED: { label: "未着手", bg: "bg-gray-200", text: "text-gray-800" },
   IN_PROGRESS: { label: "着手中", bg: "bg-yellow-200", text: "text-yellow-900" },
@@ -7,3 +6,23 @@ export const STATUS_INFO = {
 } as const;
 
 export type ProgressStatus = keyof typeof STATUS_INFO;
+
+
+/* 会員ステータスの日本語ラベル */
+export const MEMBERSHIP_LABEL = {
+  ACTIVE: "受講中",
+  PAUSED: "休会中",
+  WITHDRAWN: "退会済み",
+} as const;
+
+/* リクエスト種別・状態の日本語ラベル */
+export const REQUEST_TYPE_LABEL = {
+  PAUSE: "休会",
+  WITHDRAW: "退会",
+} as const;
+
+export const REQUEST_STATUS_LABEL = {
+  PENDING: "未処理",
+  APPROVED: "承認済み",
+  REJECTED: "却下",
+} as const;
