@@ -121,3 +121,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .btn-approve {
+    @apply px-2 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600 disabled:opacity-50;
+  }
+  .btn-reject {
+    @apply px-2 py-1 bg-gray-400 text-white rounded text-xs hover:bg-gray-500 disabled:opacity-50;
+  }
+}
