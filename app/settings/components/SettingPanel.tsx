@@ -11,10 +11,10 @@ import {
 } from "@/lib/constants";
 
 type PanelProps = {
-  initialMembership: "ACTIVE" | "PAUSED" | "WITHDRAWN";
+  initialMembership: MembershipStatus;
   initialLastReq?: {
-    type: "PAUSE" | "WITHDRAW";
-    status: "PENDING" | "APPROVED" | "REJECTED";
+    type: RequestType;
+    status: RequestStatus;
   };
   userId: string;
 };
@@ -29,10 +29,13 @@ export default function SettingsPanel({
   initialLastReq,
   userId,
 }: PanelProps) {
-  const [state, submit, isPending] = useActionState(createRequest, {
-    membership: initialMembership,
-    lastReq: initialLastReq,
-  });
+  const [state, submit, isPending] = useActionState<RequestState, FormData>(
+    createRequest,
+    {
+      membership: initialMembership,
+      lastReq: initialLastReq,
+    }
+  );
 
   const { membership, lastReq } = state;
   /* PENDING 中はボタン disable */
