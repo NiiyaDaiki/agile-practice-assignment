@@ -45,7 +45,18 @@ export default function SettingsPanel({
         <span className="font-semibold">{MEMBERSHIP_LABEL[membership]}</span>
       </p>
 
-      <form action={submit} className="flex gap-4">
+      <form
+        action={submit}
+        onSubmit={(e) => {
+          const submitter = (e.nativeEvent as SubmitEvent)
+            .submitter as HTMLButtonElement;
+          const kind = submitter?.value === "PAUSE" ? "休会" : "退会";
+          if (!window.confirm(`${kind}をリクエストします。よろしいですか？`)) {
+            e.preventDefault();
+          }
+        }}
+        className="flex gap-4"
+      >
         <input type="hidden" name="userId" value={userId} />
         {/* 休会 */}
         <button
