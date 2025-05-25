@@ -38,53 +38,56 @@ export default async function AdminRequestsPage() {
               <td className="border px-3 py-2">
                 {REQUEST_STATUS_LABEL[r.status]}
               </td>
-              <td className="border px-3 py-2 space-x-2">
-                {r.status === "PENDING" && (
-                  <>
-                    <form
-                      action={async () => {
-                        "use server";
-                        await prisma.userRequest.update({
-                          where: { id: r.id },
-                          data: {
-                            status: "APPROVED",
-                            actedAt: new Date(),
-                          },
-                        });
-                        // User.status も更新
-                        await prisma.user.update({
-                          where: { id: r.userId },
-                          data: {
-                            status: r.type === "PAUSE" ? "PAUSED" : "WITHDRAWN",
-                          },
-                        });
-                      }}
-                    >
-                      <button
-                        className="px-2 py-1 bg-green-500 text-white rounded text-xs"
-                        type="submit"
+              <td className=" border px-3 py-2 space-x-2">
+                <div className="flex gap-1 justify-evenly">
+                  {r.status === "PENDING" && (
+                    <>
+                      <form
+                        action={async () => {
+                          "use server";
+                          await prisma.userRequest.update({
+                            where: { id: r.id },
+                            data: {
+                              status: "APPROVED",
+                              actedAt: new Date(),
+                            },
+                          });
+                          // User.status も更新
+                          await prisma.user.update({
+                            where: { id: r.userId },
+                            data: {
+                              status:
+                                r.type === "PAUSE" ? "PAUSED" : "WITHDRAWN",
+                            },
+                          });
+                        }}
                       >
-                        承認
-                      </button>
-                    </form>
-                    <form
-                      action={async () => {
-                        "use server";
-                        await prisma.userRequest.update({
-                          where: { id: r.id },
-                          data: { status: "REJECTED", actedAt: new Date() },
-                        });
-                      }}
-                    >
-                      <button
-                        className="px-2 py-1 bg-gray-400 text-white rounded text-xs"
-                        type="submit"
+                        <button
+                          className="px-2 py-1 bg-green-500 text-white rounded text-xs"
+                          type="submit"
+                        >
+                          承認
+                        </button>
+                      </form>
+                      <form
+                        action={async () => {
+                          "use server";
+                          await prisma.userRequest.update({
+                            where: { id: r.id },
+                            data: { status: "REJECTED", actedAt: new Date() },
+                          });
+                        }}
                       >
-                        却下
-                      </button>
-                    </form>
-                  </>
-                )}
+                        <button
+                          className="px-2 py-1 bg-gray-400 text-white rounded text-xs"
+                          type="submit"
+                        >
+                          却下
+                        </button>
+                      </form>
+                    </>
+                  )}
+                </div>
               </td>
             </tr>
           ))}
