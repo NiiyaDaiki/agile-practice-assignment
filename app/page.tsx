@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import PublicAssignments from "@/components/PublicAssignments";
 import PausedBanner from "@/components/PausedBanner";
+import WithdrawnBanner from "@/components/WithDrawnBanner";
 
 export default async function HomePage() {
   const session = await auth();
@@ -39,6 +40,10 @@ export default async function HomePage() {
     return (
       <PausedBanner userId={session.user.id} waiting={Boolean(pendingResume)} />
     ); // 休会中UI
+  }
+
+  if (user?.status === "WITHDRAWN") {
+    return <WithdrawnBanner />;
   }
 
   // ログイン済みなら公開課題一覧を表示
