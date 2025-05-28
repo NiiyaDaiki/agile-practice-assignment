@@ -2,7 +2,7 @@
 import { useActionState } from "react";
 import { createResumeRequest } from "@/app/actions/userRequests";
 
-export default function PausedBanner({
+export default function PausedPanel({
   userId,
   waiting,
 }: {
