@@ -6,6 +6,7 @@ import Link from "next/link";
 import ProgressSelect from "@/components/ProgressSelect";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { unstable_ViewTransition as ViewTransition } from "react";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -35,40 +36,42 @@ export default async function ViewAssignmentPage({ params }: Props) {
   const currentStatus = progress?.status ?? "NOT_STARTED";
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-4">
-      <h1 className="text-3xl font-bold">{assignment.title}</h1>
-      <p className="text-sm text-gray-500">
-        最終更新: {new Date(assignment.updatedAt).toLocaleString()}
-      </p>
-      <div className="prose  rounded-sm border border-gray-200">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {assignment.content}
-        </ReactMarkdown>
-      </div>
-      <p>
-        ステータス:{" "}
-        <span
-          className={
-            assignment.isPublic
-              ? "px-2 py-1 text-white bg-green-500 rounded"
-              : "px-2 py-1 text-white bg-gray-500 rounded"
-          }
-        >
-          {assignment.isPublic ? "公開中" : "非公開"}
-        </span>
-      </p>
-      <ProgressSelect
-        assignmentId={(await params).id}
-        initialStatus={currentStatus}
-      />
-      <div className="flex space-x-4">
-        <Link
-          href="/"
-          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-        >
-          一覧へ戻る
-        </Link>
-      </div>
-    </div>
+    <ViewTransition name={`assignment-${assignment.id}`}>
+      <article className="flex flex-col max-w-2xl mx-auto p-6 space-y-4 bg-white shadow hover:shadow-md transition rounded-lg m-5 h-4/5">
+        <h1 className="text-3xl font-bold">{assignment.title}</h1>
+        <p className="text-sm text-gray-500">
+          最終更新: {new Date(assignment.updatedAt).toLocaleString()}
+        </p>
+        <div className="prose rounded-sm border border-gray-200 max-h-3/4">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {assignment.content}
+          </ReactMarkdown>
+        </div>
+        <p>
+          ステータス:{" "}
+          <span
+            className={
+              assignment.isPublic
+                ? "px-2 py-1 text-white bg-green-500 rounded"
+                : "px-2 py-1 text-white bg-gray-500 rounded"
+            }
+          >
+            {assignment.isPublic ? "公開中" : "非公開"}
+          </span>
+        </p>
+        <ProgressSelect
+          assignmentId={(await params).id}
+          initialStatus={currentStatus}
+        />
+        <div className="flex space-x-4">
+          <Link
+            href="/"
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            一覧へ戻る
+          </Link>
+        </div>
+      </article>
+    </ViewTransition>
   );
 }

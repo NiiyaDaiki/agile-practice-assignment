@@ -1,6 +1,5 @@
-// components/PublicAssignments.tsx
 import Link from "next/link";
-
+import { unstable_ViewTransition as ViewTransition } from "react";
 export type PublicAssignment = {
   id: string;
   title: string;
@@ -22,14 +21,19 @@ export default function PublicAssignments({ assignments }: Props) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {assignments.map((a) => (
-            <Link
-              key={a.id}
-              href={`/assignments/${a.id}`}
-              className="block bg-white shadow hover:shadow-md transition p-6 rounded-lg"
+            <ViewTransition
+              key={`assignment-${a.id}`}
+              name={`assignment-${a.id}`}
             >
-              <h2 className="text-2xl font-semibold mb-2">{a.title}</h2>
-              <p className="text-gray-700">{a.excerpt}</p>
-            </Link>
+              <Link
+                key={a.id}
+                href={`/assignments/${a.id}`}
+                className=" bg-white shadow hover:shadow-md transition p-6 rounded-lg inline-block"
+              >
+                <h2 className="text-2xl font-semibold mb-2">{a.title}</h2>
+                <p className="text-gray-700">{a.excerpt}</p>
+              </Link>
+            </ViewTransition>
           ))}
         </div>
       )}
