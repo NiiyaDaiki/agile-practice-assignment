@@ -2,6 +2,7 @@ import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import QueryProvider from "@/lib/providers/QueryClientProvider";
+import ScrollRestorer from "@/lib/providers/ScrollRestorer";
 
 export default function RootLayout({
   children,
@@ -13,6 +14,7 @@ export default function RootLayout({
       <body className="h-dvh">
         <QueryProvider>
           <SessionProvider>
+            <ScrollRestorer />
             <Header />
             {children}
           </SessionProvider>
