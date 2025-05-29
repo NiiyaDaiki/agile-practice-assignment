@@ -3,11 +3,13 @@ import { useEffect } from "react";
 
 export default function ScrollRestorer() {
   useEffect(() => {
-    const nav: any = (window as any).navigation;
+    const nav = window.navigation;
     if (!nav) return; // API 非対応ブラウザ
 
     const store = new Map<string, number>(); // pathname+search → scrollY
 
+    // tslint:disable-next-line:@typescript-eslint/no-explicit-any
+    // todo: 適切な型をつける
     const onNavigate = (event: any) => {
       const fromKey = location.pathname + location.search;
       store.set(fromKey, window.scrollY);
