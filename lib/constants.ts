@@ -31,3 +31,40 @@ export const REQUEST_STATUS_LABEL = {
 export type MembershipStatus = keyof typeof MEMBERSHIP_LABEL;
 export type RequestType = keyof typeof REQUEST_TYPE_LABEL;
 export type RequestStatus = keyof typeof REQUEST_STATUS_LABEL;
+
+export const GENRE_STYLE: Record<
+  string,
+  { bg: string; border: string; text: string }
+> = {
+  データベース: {
+    bg: "bg-teal-50",
+    border: "border-teal-500",
+    text: "text-teal-600",
+  },
+  アーキテクチャ: {
+    bg: "bg-indigo-50",
+    border: "border-indigo-500",
+    text: "text-indigo-600",
+  },
+  バックエンド: {
+    bg: "bg-amber-50",
+    border: "border-amber-500",
+    text: "text-amber-600",
+  },
+  フロントエンド: {
+    bg: "bg-rose-50",
+    border: "border-rose-500",
+    text: "text-rose-600",
+  },
+  テスト: {
+    bg: "bg-emerald-50",
+    border: "border-emerald-500",
+    text: "text-emerald-600",
+  },
+};
+
+export const DEFAULT_STYLE = {
+  bg: "bg-gray-50",
+  border: "border-gray-400",
+  text: "text-gray-600",
+};

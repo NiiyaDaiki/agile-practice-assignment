@@ -17,12 +17,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import MarkdownPreview from "@/components/MarkdownPreview";
+import { useQuery, QueryFunction } from "@tanstack/react-query";
+
+type Genre = { id: string; name: string };
+
+const fetchGenres: QueryFunction<Genre[]> = async () => {
+  const res = await fetch("/api/genres");
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+};
 
 const schema = z.object({
   id: z.string().optional(),
   title: z.string().trim().min(1, "タイトルは必須"),
   content: z.string().trim().min(1, "内容は必須"),
   isPublic: z.boolean().optional(),
+  genreId: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -30,9 +40,18 @@ type FormValues = z.infer<typeof schema>;
 export function AssignmentForm({ initial }: { initial?: FormValues }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const { data: genres, isLoading } = useQuery({
+    queryKey: ["genres"],
+    queryFn: fetchGenres,
+  });
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: initial ?? { title: "", content: "", isPublic: false },
+    defaultValues: initial ?? {
+      title: "",
+      content: "",
+      isPublic: false,
+      genreId: "",
+    },
   });
 
   const onSubmit = (values: FormValues) => {
@@ -63,7 +82,7 @@ export function AssignmentForm({ initial }: { initial?: FormValues }) {
             </FormItem>
           )}
         />
-        {/* <div className="flex "> */}
+
         <FormField
           control={form.control}
           name="content"
@@ -86,7 +105,29 @@ export function AssignmentForm({ initial }: { initial?: FormValues }) {
             </FormItem>
           )}
         />
-        {/* </div> */}
+
+        <FormField
+          control={form.control}
+          name="genreId"
+          render={({ field }) => (
+            <div>
+              <label className="block mb-1 font-medium">ジャンル</label>
+              {isLoading ? (
+                <p className="text-sm text-gray-500">Loading…</p>
+              ) : (
+                <select {...field} className="border rounded p-2 w-full">
+                  <option value="">未分類</option>
+                  {genres?.map((g) => (
+                    <option key={g.id} value={g.id}>
+                      {g.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="isPublic"

@@ -25,7 +25,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           select: { status: true },
         });
         token.status = dbUser?.status as MembershipStatus;
-        console.log(token.status)
       }
       return token;
     },

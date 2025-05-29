@@ -9,6 +9,7 @@ const assignmentSchema = z.object({
   title: z.string().trim().min(1),
   content: z.string().trim().min(1),
   isPublic: z.boolean().optional(),
+  genreId: z.string().optional(),
 });
 
 // 作成
@@ -22,7 +23,8 @@ export async function POST(req: Request) {
       title: data.title,
       content: data.content,
       isPublic: data.isPublic ?? false,
-      authorId: session.user.id
+      authorId: session.user.id,
+      genreId: data.genreId || undefined,
     },
   });
   return NextResponse.json(assignment);
@@ -40,29 +42,8 @@ export async function PUT(req: Request) {
       title: data.title,
       content: data.content,
       isPublic: data.isPublic ?? false,
+      genreId: data.genreId || undefined,
     },
   });
   return NextResponse.json(assignment);
 }
-
-// // 削除
-// export async function DELETE(req: Request) {
-//   const session = await auth();;
-//   if (!session) return NextResponse.error();
-//   const { searchParams } = new URL(req.url);
-//   const id = searchParams.get("id");
-//   if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
-//   await prisma.assignment.delete({ where: { id, authorId: session?.user?.id, } });
-//   return NextResponse.json({ ok: true });
-// }
-
-// // 取得 (ユーザーのリスト)
-// export async function GET(req: Request) {
-//   const session = await auth();;
-//   if (!session) return NextResponse.error();
-//   const assignments = await prisma.assignment.findMany({
-//     where: { authorId: session?.user?.id, },
-//     orderBy: { createdAt: "desc" },
-//   });
-//   return NextResponse.json(assignments);
-// }

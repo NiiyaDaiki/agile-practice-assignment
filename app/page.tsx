@@ -28,14 +28,15 @@ export default async function HomePage() {
   // ログイン済みなら公開課題一覧を表示
   const list = await prisma.assignment.findMany({
     where: { isPublic: true },
-    orderBy: { title: "asc" },
-    select: { id: true, title: true, content: true },
+    include: { genre: true },
+    orderBy: [{ genre: { order: "asc" } }, { createdAt: "asc" }],
   });
 
   // 100文字の抜粋を作成
   const assignments = list.map((a) => ({
     id: a.id,
     title: a.title,
+    genre: a.genre?.name ?? "未分類",
     excerpt: a.content.length > 100 ? `${a.content.slice(0, 100)}…` : a.content,
   }));
 

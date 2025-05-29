@@ -26,6 +26,7 @@ export default async function EditAssignmentPage({ params }: Props) {
           title: assignment.title,
           content: assignment.content,
           isPublic: assignment.isPublic,
+          genreId: assignment.genreId ?? "",
         }}
       />
     </div>
