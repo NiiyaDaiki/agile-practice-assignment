@@ -63,20 +63,6 @@ export default async function ViewAssignmentPage({ params }: Props) {
           </ReactMarkdown>
         </div>
 
-        {/* 公開ステータス */}
-        <p>
-          ステータス:{" "}
-          <span
-            className={
-              assignment.isPublic
-                ? "px-2 py-1 text-white bg-green-500 rounded"
-                : "px-2 py-1 text-white bg-gray-500 rounded"
-            }
-          >
-            {assignment.isPublic ? "公開中" : "非公開"}
-          </span>
-        </p>
-
         {/* 進捗セレクト */}
         <ProgressSelect
           assignmentId={assignment.id}

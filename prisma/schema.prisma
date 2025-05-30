@@ -34,6 +34,8 @@ model User {
   assignmentProgress AssignmentProgress[]
 
   userRequest UserRequest[]
+
+  AssignmentRequest AssignmentRequest[]
 }
 
 model Assignment {
@@ -82,6 +84,26 @@ model AssignmentProgress {
   @@id([userId, assignmentId])
 }
 
+enum AssignmentRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model AssignmentRequest {
+  id        String  @id @default(cuid())
+  userId    String
+  genreId   String
+  status    AssignmentRequestStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  actedAt   DateTime?
+
+  user  User  @relation(fields: [userId], references: [id])
+  genre Genre @relation(fields: [genreId], references: [id])
+
+  @@unique([userId, genreId, status], name: "user_genre_unique_pending")
+}
+
 enum MembershipStatus {
   ACTIVE
   PAUSED
@@ -106,6 +128,8 @@ model Genre {
   description String?
   order       Int          @default(0)   
   assignments Assignment[]
+
+  AssignmentRequest AssignmentRequest[]
 }
 
 

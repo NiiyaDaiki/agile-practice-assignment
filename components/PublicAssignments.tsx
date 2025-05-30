@@ -1,6 +1,8 @@
+"use client";
 import Link from "next/link";
 import { unstable_ViewTransition as ViewTransition } from "react";
 import { GENRE_STYLE, DEFAULT_STYLE } from "@/lib/constants";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type PublicAssignment = {
   id: string;
@@ -13,7 +15,30 @@ interface Props {
   assignments: PublicAssignment[];
 }
 
+type GenreInfo = {
+  id: string;
+  name: string;
+  isOpen: boolean; // 公開済みか
+  request: { status: "PENDING" } | null;
+};
+
 export default function PublicAssignments({ assignments }: Props) {
+  const qc = useQueryClient();
+  const { data: genreInfo } = useQuery<GenreInfo[]>({
+    queryKey: ["genre-requests"],
+    queryFn: () => fetch("/api/genre-requests").then((r) => r.json()),
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (genreId: string) =>
+      fetch("/api/genre-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ genreId }),
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["genre-requests"] }),
+  });
+
   /* ---------- ジャンルごとにグループ化 ---------- */
   const grouped = assignments.reduce<Record<string, PublicAssignment[]>>(
     (acc, a) => {
@@ -66,6 +91,24 @@ export default function PublicAssignments({ assignments }: Props) {
             </div>
           );
         })
+      )}
+      {genreInfo?.map((g) =>
+        g.isOpen ? null : (
+          <div key={g.id} className="my-8 flex items-center gap-4">
+            <span className="text-lg font-medium">{g.name}</span>
+            {g.request?.status === "PENDING" ? (
+              <span className="text-sm text-yellow-600">承認待ち</span>
+            ) : (
+              <button
+                onClick={() => mutate(g.id)}
+                className="px-3 py-1 bg-blue-600 text-white rounded disabled:opacity-50"
+                disabled={isPending}
+              >
+                公開をリクエスト
+              </button>
+            )}
+          </div>
+        )
       )}
     </section>
   );

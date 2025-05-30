@@ -32,6 +32,15 @@ export default async function AdminHome() {
             受講生 × 課題の進捗ステータスを表形式で確認します。
           </p>
         </Link>
+        <Link
+          href="/admin/assignment-requests"
+          className="block bg-white shadow hover:shadow-md transition rounded-lg p-6"
+        >
+          <h2 className="text-xl font-semibold mb-2">課題公開リクエスト</h2>
+          <p className="text-gray-600">
+            受講生からの課題公開リクエストを確認します。
+          </p>
+        </Link>
       </div>
     </main>
   );

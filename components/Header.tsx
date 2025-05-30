@@ -60,7 +60,7 @@ export function Header() {
               進捗一覧
             </Link>
             <Link href="/admin/requests" className="relative">
-              リクエスト
+              休会・退会リクエスト
               {pendingRequestCount > 0 && (
                 <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
                   {pendingRequestCount}
