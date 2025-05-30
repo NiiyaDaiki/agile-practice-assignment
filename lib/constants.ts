@@ -37,34 +37,34 @@ export const GENRE_STYLE: Record<
   { bg: string; border: string; text: string }
 > = {
   データベース: {
-    bg: "bg-teal-50",
+    bg: "bg-teal-600",
     border: "border-teal-500",
     text: "text-teal-600",
   },
   アーキテクチャ: {
-    bg: "bg-indigo-50",
+    bg: "bg-indigo-600",
     border: "border-indigo-500",
     text: "text-indigo-600",
   },
   バックエンド: {
-    bg: "bg-amber-50",
+    bg: "bg-amber-600",
     border: "border-amber-500",
     text: "text-amber-600",
   },
   フロントエンド: {
-    bg: "bg-rose-50",
+    bg: "bg-rose-600",
     border: "border-rose-500",
     text: "text-rose-600",
   },
   テスト: {
-    bg: "bg-emerald-50",
+    bg: "bg-emerald-600",
     border: "border-emerald-500",
     text: "text-emerald-600",
   },
 };
 
 export const DEFAULT_STYLE = {
-  bg: "bg-gray-50",
+  bg: "bg-gray-600",
   border: "border-gray-400",
   text: "text-gray-600",
 };

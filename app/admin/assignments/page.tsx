@@ -8,7 +8,6 @@ export default async function AssignmentsPage() {
 
   // サーバーで一度だけ取得
   const list = await prisma.assignment.findMany({
-    orderBy: { title: "asc" },
     select: {
       id: true,
       title: true,
@@ -17,7 +16,9 @@ export default async function AssignmentsPage() {
         where: { userId: session.user.id },
         select: { status: true },
       },
+      genre: true,
     },
+    orderBy: [{ genre: { order: "asc" } }, { createdAt: "asc" }],
   });
 
   // Date → ISO 文字列に変換してクライアントへ
@@ -25,6 +26,7 @@ export default async function AssignmentsPage() {
     id: a.id,
     title: a.title,
     isPublic: a.isPublic,
+    genre: a.genre?.name ?? "未分類",
   }));
 
   return <AssignmentsList initialAssignments={initialAssignments} />;

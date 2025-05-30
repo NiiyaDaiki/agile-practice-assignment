@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { GENRE_STYLE, DEFAULT_STYLE } from "@/lib/constants";
 
 export type Assignment = {
   id: string;
   title: string;
   isPublic: boolean;
+  genre: string;
 };
 
 type Props = {
@@ -41,39 +43,47 @@ export default function AssignmentsList({ initialAssignments }: Props) {
         <p className="text-center text-gray-500">課題がありません</p>
       ) : (
         <ul className="space-y-4">
-          {assignments.map((a) => (
-            <li
-              key={a.id}
-              className="p-4 border rounded flex justify-between items-center"
-            >
-              <div className="flex items-center space-x-3">
-                {/* タイトル */}
-                <Link
-                  href={`/admin/assignments/${a.id}/edit`}
-                  className="font-medium"
-                >
-                  {a.title}
-                </Link>
-                {/* 公開ステータスバッジ */}
-                <span
-                  className={
-                    a.isPublic
-                      ? "px-2 py-0.5 text-xs font-medium text-green-800 bg-green-100 rounded"
-                      : "px-2 py-0.5 text-xs font-medium text-gray-800 bg-gray-200 rounded"
-                  }
-                >
-                  {a.isPublic ? "公開中" : "非公開"}
-                </span>
-              </div>
-
-              <button
-                onClick={() => handleDelete(a.id)}
-                className="px-3 py-1 bg-red-500 text-white rounded text-sm"
+          {assignments.map((a) => {
+            const style = GENRE_STYLE[a.genre ?? ""] ?? DEFAULT_STYLE;
+            return (
+              <li
+                key={a.id}
+                className="p-4 border rounded flex justify-between items-center"
               >
-                削除
-              </button>
-            </li>
-          ))}
+                <div className="flex items-center space-x-3">
+                  {/* タイトル */}
+                  <Link
+                    href={`/admin/assignments/${a.id}/edit`}
+                    className="font-medium"
+                  >
+                    {a.title}
+                  </Link>
+                  <span
+                    className={`px-2 py-0.5 text-xs text-white rounded ${style.bg}`}
+                  >
+                    {a.genre}
+                  </span>
+                  {/* 公開ステータスバッジ */}
+                  <span
+                    className={
+                      a.isPublic
+                        ? "px-2 py-0.5 text-xs font-medium text-green-800 bg-green-100 rounded"
+                        : "px-2 py-0.5 text-xs font-medium text-gray-800 bg-gray-200 rounded"
+                    }
+                  >
+                    {a.isPublic ? "公開中" : "非公開"}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => handleDelete(a.id)}
+                  className="px-3 py-1 bg-red-500 text-white rounded text-sm"
+                >
+                  削除
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
 
