@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
-import GitHub from "next-auth/providers/github"
-import Google from "next-auth/providers/google"
+import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
+import type { AdapterUser } from "next-auth/adapters";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./lib/prisma";
 import { MembershipStatus } from "@/lib/constants";
@@ -15,16 +16,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     /** ① JWT 生成・更新フェーズ */
     async jwt({ token, user }) {
-      if (user) {
-        // ログイン直後: DB から来た User オブジェクトに status がある
-        token.status = (user as any).status as MembershipStatus;
-      } else if (token.sub && token.status === undefined) {
-        // ページ再読込時: DB から status を取ってトークンに乗せる
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.sub },
-          select: { status: true },
-        });
-        token.status = dbUser?.status as MembershipStatus;
+      if (token.sub) {
+        if (user) {
+          // ログイン直後: DB から来た User オブジェクトに status がある
+          token.status = (user as AdapterUser & { status?: MembershipStatus }).status;
+        } else {
+          // 毎回 DB から最新 status を取得
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.sub },
+            select: { status: true },
+          });
+          token.status = dbUser?.status as MembershipStatus;
+        }
       }
       return token;
     },
