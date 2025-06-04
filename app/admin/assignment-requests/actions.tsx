@@ -7,16 +7,16 @@ export async function approve(formData: FormData) {
   const id = formData.get("id") as string;
   const genreId = formData.get("genreId") as string;
 
-  await prisma.$transaction([
-    prisma.assignmentRequest.update({
-      where: { id },
-      data: { status: "APPROVED", actedAt: new Date() },
-    }),
-    prisma.assignment.updateMany({
-      where: { genreId },
-      data: { isPublic: true },
-    }),
-  ]);
+  const request = await prisma.assignmentRequest.update({
+    where: { id },
+    data: { status: "APPROVED", actedAt: new Date() },
+  });
+
+  await prisma.genreAccess.upsert({
+    where: { userId_genreId: { userId: request.userId, genreId } },
+    create: { userId: request.userId, genreId },
+    update: {},
+  });
 
   revalidatePath("/admin/assignment-requests");
 }

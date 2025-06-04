@@ -8,9 +8,9 @@ export default function ScrollRestorer() {
 
     const store = new Map<string, number>(); // pathname+search → scrollY
 
-    // tslint:disable-next-line:@typescript-eslint/no-explicit-any
-    // todo: 適切な型をつける
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onNavigate = (event: any) => {
+      // TODO: 型定義が存在しないため any を利用
       const fromKey = location.pathname + location.search;
       store.set(fromKey, window.scrollY);
 

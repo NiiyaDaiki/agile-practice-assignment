@@ -27,7 +27,12 @@ export default async function HomePage() {
 
   // ログイン済みなら公開課題一覧を表示
   const list = await prisma.assignment.findMany({
-    where: { isPublic: true },
+    where: {
+      OR: [
+        { isPublic: true },
+        { genre: { GenreAccess: { some: { userId: session.user.id } } } },
+      ],
+    },
     include: { genre: true },
     orderBy: [{ genre: { order: "asc" } }, { createdAt: "asc" }],
   });
