@@ -18,8 +18,19 @@ const config: NextAuthConfig = {
         if (user) {
           // ログイン直後: DB から来た User オブジェクトに status がある
           token.status = (user as AdapterUser & { status?: MembershipStatus }).status;
-        } else if (process.env.NEXT_RUNTIME !== "edge") {
-          // Node.js 環境のみ DB から最新 status を取得
+        } else if (process.env.NEXT_RUNTIME === "edge") {
+          // Edge Runtime では内部 API 経由で取得
+          const base =
+            process.env.NEXTAUTH_URL ??
+            (process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`) ??
+            "http://localhost:3000";
+          const res = await fetch(`${base}/api/user-status/${token.sub}`);
+          if (res.ok) {
+            const data = (await res.json()) as { status?: MembershipStatus };
+            token.status = data.status;
+          }
+        } else {
+          // Node.js 環境では直接 DB から取得
           const { prisma } = await import("./lib/prisma");
           const dbUser = await prisma.user.findUnique({
             where: { id: token.sub },
