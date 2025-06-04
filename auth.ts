@@ -1,13 +1,11 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import type { NextAuthConfig } from "next-auth";
 import type { AdapterUser } from "next-auth/adapters";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "./lib/prisma";
 import { MembershipStatus } from "@/lib/constants";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+const config: NextAuthConfig = {
   providers: [
     GitHub,
     Google
@@ -20,8 +18,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (user) {
           // ログイン直後: DB から来た User オブジェクトに status がある
           token.status = (user as AdapterUser & { status?: MembershipStatus }).status;
-        } else {
-          // 毎回 DB から最新 status を取得
+        } else if (process.env.NEXT_RUNTIME !== "edge") {
+          // Node.js 環境のみ DB から最新 status を取得
+          const { prisma } = await import("./lib/prisma");
           const dbUser = await prisma.user.findUnique({
             where: { id: token.sub },
             select: { status: true },
@@ -41,4 +40,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
-});
+};
+
+if (process.env.NEXT_RUNTIME !== "edge") {
+  const { PrismaAdapter } = await import("@auth/prisma-adapter");
+  const { prisma } = await import("./lib/prisma");
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore - adapter is conditionally added only in Node.js
+  config.adapter = PrismaAdapter(prisma);
+}
+
+export const { handlers, auth, signIn, signOut } = NextAuth(config);
