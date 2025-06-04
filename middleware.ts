@@ -6,6 +6,7 @@ const PUBLIC_PATHS = [
   "/favicon.ico",
   "/_next",          // Next.js assets
   "/api/auth",       // Auth.js コールバック
+  "/api/user-status", // internal API for edge runtime
   "/signin",         // ログインページ
   "/paused-info",    // 休会バナー
   "/withdrawn-info", // 退会バナー
