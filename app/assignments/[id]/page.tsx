@@ -20,10 +20,8 @@ export default async function ViewAssignmentPage({ params }: Props) {
   const assignment = await prisma.assignment.findFirst({
     where: {
       id: (await params).id,
-      OR: [
-        { isPublic: true },
-        { genre: { GenreAccess: { some: { userId: session.user.id } } } },
-      ],
+      isPublic: true,
+      genre: { GenreAccess: { some: { userId: session.user.id } } },
     },
     include: { genre: true },
   });
