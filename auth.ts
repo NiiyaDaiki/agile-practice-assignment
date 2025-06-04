@@ -10,7 +10,7 @@ const config: NextAuthConfig = {
     GitHub,
     Google
   ],
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", updateAge: 0 },
   callbacks: {
     /** ① JWT 生成・更新フェーズ */
     async jwt({ token, user }) {
