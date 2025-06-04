@@ -18,10 +18,14 @@ export default async function ViewAssignmentPage({ params }: Props) {
   if (!session?.user?.id) redirect("/api/auth/signin");
 
   const assignment = await prisma.assignment.findFirst({
-    where: { id: (await params).id },
+    where: {
+      id: (await params).id,
+      isPublic: true,
+      genre: { GenreAccess: { some: { userId: session.user.id } } },
+    },
     include: { genre: true },
   });
-  if (!assignment) redirect("/admin/assignments");
+  if (!assignment) redirect("/");
 
   const progress = await prisma.assignmentProgress.findUnique({
     where: {

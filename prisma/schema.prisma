@@ -36,6 +36,8 @@ model User {
   userRequest UserRequest[]
 
   AssignmentRequest AssignmentRequest[]
+
+  GenreAccess GenreAccess[]
 }
 
 model Assignment {
@@ -104,6 +106,17 @@ model AssignmentRequest {
   @@unique([userId, genreId, status], name: "user_genre_unique_pending")
 }
 
+model GenreAccess {
+  userId  String
+  genreId String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([userId, genreId])
+}
+
 enum MembershipStatus {
   ACTIVE
   PAUSED
@@ -126,10 +139,12 @@ model Genre {
   id          String       @id @default(cuid())
   name        String       @unique
   description String?
-  order       Int          @default(0)   
+  order       Int          @default(0)
   assignments Assignment[]
 
   AssignmentRequest AssignmentRequest[]
+
+  GenreAccess GenreAccess[]
 }
 
 

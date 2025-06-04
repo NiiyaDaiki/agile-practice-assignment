@@ -10,8 +10,8 @@ export async function GET() {
   const genres = await prisma.genre.findMany({
     orderBy: { order: "asc" },
     include: {
-      assignments: { where: { isPublic: true }, select: { id: true } },
       _count: { select: { assignments: { where: { isPublic: true } } } },
+      GenreAccess: { where: { userId: session.user.id } },
       AssignmentRequest: {
         where: { userId: session.user.id },
         orderBy: { createdAt: "desc" },
@@ -23,7 +23,7 @@ export async function GET() {
   const result = genres.map((g) => ({
     id: g.id,
     name: g.name,
-    isOpen: g._count.assignments > 0,
+    isOpen: g._count.assignments > 0 || g.GenreAccess.length > 0,
     request: g.AssignmentRequest[0] ?? null, // {status:"PENDING"…} or null
   }));
 
