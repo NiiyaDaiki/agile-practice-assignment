@@ -108,10 +108,9 @@ export function Header() {
         </div>
       </div>
 
-      {/* スマホメニュー (overlay) */}
+      {/* スマホメニュー */}
       <nav
-        className={`md:hidden fixed inset-0 z-20 bg-black/90 flex flex-col items-center justify-center gap-6 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-        onClick={() => setOpen(false)}
+        className={`md:hidden mt-2 flex flex-col gap-2 ${open ? "" : "hidden"}`}
       >
         {inAdmin && (
           <>

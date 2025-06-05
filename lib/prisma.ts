@@ -1,4 +1,7 @@
-// In this restricted environment the Prisma client may not be generated.
-// Export a typed `any` placeholder so type-checking succeeds.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const prisma: any = {}
+import { PrismaClient } from "@prisma/client"
+
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+
+export const prisma = globalForPrisma.prisma || new PrismaClient()
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma

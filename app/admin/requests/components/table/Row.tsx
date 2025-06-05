@@ -1,22 +1,11 @@
 "use client";
 import { approve, reject } from "../../actions";
-import {
-  REQUEST_STATUS_LABEL,
-  REQUEST_TYPE_LABEL,
-  type RequestStatus,
-  type RequestType,
-} from "@/lib/constants";
+import { REQUEST_STATUS_LABEL, REQUEST_TYPE_LABEL } from "@/lib/constants";
+import type { UserRequest, User } from "@prisma/client";
 import { useTransition } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
-export type FullRequest = {
-  id: string;
-  userId: string;
-  type: RequestType;
-  status: RequestStatus;
-  createdAt: Date;
-  user: { name: string | null; email: string };
-};
+export type FullRequest = UserRequest & { user: Pick<User, "name" | "email"> };
 
 export default function Row({ r }: { r: FullRequest }) {
   const qc = useQueryClient();
