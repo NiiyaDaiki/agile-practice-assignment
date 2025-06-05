@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
 import { SignOutButton } from "./SignOutButton";
 import Logo from "@/public/logo.png";
 import { useQuery } from "@tanstack/react-query";
@@ -16,6 +18,8 @@ export function Header() {
   const { data: session, status } = useSession();
   const pathname = usePathname(); // ★ 現在のパスを取得
   const inAdmin = pathname.startsWith("/admin");
+
+  const [open, setOpen] = useState(false);
 
   const { data } = useQuery({
     queryKey: ["pending-count"],
@@ -35,16 +39,79 @@ export function Header() {
   }
 
   return (
-    <header className="p-4 flex justify-between items-center bg-black text-white">
-      {/* -------- 左側：ブランド＆（必要に応じて）管理メニュー -------- */}
-      <nav className="flex items-center space-x-6">
+    <header className="p-4 bg-black text-white relative">
+      <div className="flex justify-between items-center">
+        {/* ブランド */}
         <Link href="/" className="flex items-center hover:opacity-80">
           <Image src={Logo} alt="APA Logo" width={40} height={40} />
-          <span className="ml-2 font-bold text-xl">
-            Agile Practice Assignment
-          </span>
+          <span className="ml-2 font-bold text-xl">Agile Practice Assignment</span>
         </Link>
 
+        {/* PC: メニュー＋サインインアウト, SP: ハンバーガー */}
+        <div className="flex items-center">
+          <nav className="hidden md:flex items-center space-x-6 mr-4">
+            {inAdmin && (
+              <>
+                <Link
+                  href="/admin/assignments"
+                  className="hover:underline hover:text-gray-300"
+                >
+                  課題編集
+                </Link>
+                <Link
+                  href="/admin/progress"
+                  className="hover:underline hover:text-gray-300"
+                >
+                  進捗一覧
+                </Link>
+                <Link href="/admin/requests" className="relative">
+                  休会・退会リクエスト
+                  {pendingRequestCount > 0 && (
+                    <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
+                      {pendingRequestCount}
+                    </span>
+                  )}
+                </Link>
+              </>
+            )}
+            {session && !inAdmin && (
+              <Link
+                href="/settings"
+                className="hover:underline hover:text-gray-300"
+              >
+                設定
+              </Link>
+            )}
+          </nav>
+
+          <div className="hidden md:block">
+            {session ? (
+              <SignOutButton />
+            ) : (
+              <Link
+                href="/signin"
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              >
+                サインイン
+              </Link>
+            )}
+          </div>
+
+          {/* ハンバーガー */}
+          <button
+            className="md:hidden p-2"
+            onClick={() => setOpen((o) => !o)}
+            aria-label="メニューを開閉"
+          >
+            {open ? <X className="size-6" /> : <Menu className="size-6" />}
+          </button>
+        </div>
+      </div>
+
+      {/* スマホメニュー */}
+      <nav
+        className={`md:hidden mt-2 flex flex-col gap-2 ${open ? "" : "hidden"}`}
+      >
         {inAdmin && (
           <>
             <Link
@@ -77,21 +144,19 @@ export function Header() {
             設定
           </Link>
         )}
+        <div>
+          {session ? (
+            <SignOutButton />
+          ) : (
+            <Link
+              href="/signin"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block text-center"
+            >
+              サインイン
+            </Link>
+          )}
+        </div>
       </nav>
-
-      {/* -------- 右側：サインイン／アウト -------- */}
-      <div>
-        {session ? (
-          <SignOutButton />
-        ) : (
-          <Link
-            href="/signin"
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-          >
-            サインイン
-          </Link>
-        )}
-      </div>
     </header>
   );
 }
