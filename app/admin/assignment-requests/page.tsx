@@ -11,13 +11,26 @@ export default async function AdminAssignmentRequestsPage() {
   // 本番では role === "ADMIN" などチェック推奨
 
   /* 一覧取得 */
-  const requests = await prisma.assignmentRequest.findMany({
+  const requests: {
+    id: string;
+    genreId: string;
+    status: "PENDING" | "APPROVED" | "REJECTED";
+    createdAt: Date;
+    user: { name: string | null; email: string };
+    genre: { name: string };
+  }[] = await prisma.assignmentRequest.findMany({
     orderBy: { createdAt: "asc" },
     include: {
       user: { select: { name: true, email: true } },
       genre: true,
     },
   });
+
+  const statusLabels = {
+    PENDING: <span className="text-yellow-600">未処理</span>,
+    APPROVED: <span className="text-green-600">承認済み</span>,
+    REJECTED: <span className="text-gray-500">却下</span>,
+  } as const;
 
   return (
     <div className="mx-auto max-w-4xl p-6">
@@ -52,13 +65,7 @@ export default async function AdminAssignmentRequestsPage() {
 
               {/* ステータス */}
               <td className="border px-3 py-2">
-                {
-                  {
-                    PENDING: <span className="text-yellow-600">未処理</span>,
-                    APPROVED: <span className="text-green-600">承認済み</span>,
-                    REJECTED: <span className="text-gray-500">却下</span>,
-                  }[r.status]
-                }
+                {statusLabels[r.status as keyof typeof statusLabels]}
               </td>
 
               {/* 操作ボタン */}

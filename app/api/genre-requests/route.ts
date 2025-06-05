@@ -7,7 +7,13 @@ export async function GET() {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json([], { status: 401 });
 
-  const genres = await prisma.genre.findMany({
+  const genres: {
+    id: string;
+    name: string;
+    _count: { assignments: number };
+    GenreAccess: unknown[];
+    AssignmentRequest: { status: string }[];
+  }[] = await prisma.genre.findMany({
     orderBy: { order: "asc" },
     include: {
       _count: { select: { assignments: { where: { isPublic: true } } } },

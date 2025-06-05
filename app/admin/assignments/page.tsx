@@ -1,13 +1,20 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import AssignmentsList from "@/components/AssignmentsList";
+import type { ProgressStatus } from "@/lib/constants";
 
 export default async function AssignmentsPage() {
   const session = await auth();
   if (!session?.user?.id) return null;
 
   // サーバーで一度だけ取得
-  const list = await prisma.assignment.findMany({
+  const list: {
+    id: string;
+    title: string;
+    isPublic: boolean;
+    assignmentProgress: { status: ProgressStatus }[];
+    genre: { name: string } | null;
+  }[] = await prisma.assignment.findMany({
     select: {
       id: true,
       title: true,
