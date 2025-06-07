@@ -1,7 +1,12 @@
 "use client";
 import Link from "next/link";
 import { unstable_ViewTransition as ViewTransition } from "react";
-import { GENRE_STYLE, DEFAULT_STYLE, STATUS_INFO, ProgressStatus } from "@/lib/constants";
+import {
+  GENRE_STYLE,
+  DEFAULT_STYLE,
+  STATUS_INFO,
+  ProgressStatus,
+} from "@/lib/constants";
 import { CheckCircle } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -82,9 +87,13 @@ export default function PublicAssignments({ assignments }: Props) {
                       className={`relative w-72 shadow hover:shadow-md p-6 rounded-lg shrink-0 border-l-4  ${style.border}`}
                     >
                       <span
-                        className={`absolute top-2 right-2 flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded ${STATUS_INFO[a.status].bg} ${STATUS_INFO[a.status].text}`}
+                        className={`absolute top-1 right-1 flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded ${
+                          STATUS_INFO[a.status].bg
+                        } ${STATUS_INFO[a.status].text}`}
                       >
-                        {a.status === "DONE" && <CheckCircle className="w-4 h-4" />}
+                        {a.status === "DONE" && (
+                          <CheckCircle className="w-4 h-4" />
+                        )}
                         {STATUS_INFO[a.status].label}
                       </span>
                       <h3 className="text-xl font-medium mb-2 truncate">

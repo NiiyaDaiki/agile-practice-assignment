@@ -48,7 +48,7 @@ export default async function HomePage() {
     title: a.title,
     genre: a.genre?.name ?? "未分類",
     excerpt: a.content.length > 100 ? `${a.content.slice(0, 100)}…` : a.content,
-    status: (a.assignmentProgress[0]?.status ?? "NOT_STARTED") as ProgressStatus,
+    status: a.assignmentProgress[0]?.status ?? "NOT_STARTED",
   }));
 
   return <PublicAssignments assignments={assignments} />;
