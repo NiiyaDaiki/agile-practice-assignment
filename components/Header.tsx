@@ -44,7 +44,9 @@ export function Header() {
         {/* ブランド */}
         <Link href="/" className="flex items-center hover:opacity-80">
           <Image src={Logo} alt="APA Logo" width={40} height={40} />
-          <span className="ml-2 font-bold text-xl">Agile Practice Assignment</span>
+          <span className="ml-2 font-bold text-xl">
+            Agile Practice Assignment
+          </span>
         </Link>
 
         {/* PC: メニュー＋サインインアウト, SP: ハンバーガー */}
@@ -75,12 +77,17 @@ export function Header() {
               </>
             )}
             {session && !inAdmin && (
-              <Link
-                href="/settings"
-                className="hover:underline hover:text-gray-300"
-              >
-                設定
-              </Link>
+              <div className="space-x-6">
+                <Link href="/" className="hover:underline hover:text-gray-300">
+                  課題一覧
+                </Link>
+                <Link
+                  href="/settings"
+                  className="hover:underline hover:text-gray-300"
+                >
+                  設定
+                </Link>
+              </div>
             )}
           </nav>
 
@@ -109,54 +116,81 @@ export function Header() {
       </div>
 
       {/* スマホメニュー */}
-      <nav
-        className={`md:hidden mt-2 flex flex-col gap-2 ${open ? "" : "hidden"}`}
+      <div
+        className={`md:hidden fixed inset-0 bg-black/85 z-40  flex flex-col items-center p-6 gap-4 transition-opacity duration-300 ${
+          open ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
       >
-        {inAdmin && (
-          <>
-            <Link
-              href="/admin/assignments"
-              className="hover:underline hover:text-gray-300"
-            >
-              課題編集
-            </Link>
-            <Link
-              href="/admin/progress"
-              className="hover:underline hover:text-gray-300"
-            >
-              進捗一覧
-            </Link>
-            <Link href="/admin/requests" className="relative">
-              休会・退会リクエスト
-              {pendingRequestCount > 0 && (
-                <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
-                  {pendingRequestCount}
-                </span>
-              )}
-            </Link>
-          </>
-        )}
-        {session && !inAdmin && (
-          <Link
-            href="/settings"
-            className="hover:underline hover:text-gray-300"
-          >
-            設定
-          </Link>
-        )}
-        <div>
-          {session ? (
-            <SignOutButton />
-          ) : (
-            <Link
-              href="/signin"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block text-center"
-            >
-              サインイン
-            </Link>
+        <nav className="flex flex-col gap-6 items-center text-white mt-12 text-2xl">
+          {inAdmin && (
+            <>
+              <Link
+                href="/admin/assignments"
+                className="hover:underline hover:text-gray-300"
+                onClick={() => setOpen(false)}
+              >
+                課題編集
+              </Link>
+              <Link
+                href="/admin/progress"
+                className="hover:underline hover:text-gray-300"
+                onClick={() => setOpen(false)}
+              >
+                進捗一覧
+              </Link>
+              <Link
+                href="/admin/requests"
+                className="relative"
+                onClick={() => setOpen(false)}
+              >
+                休会・退会リクエスト
+                {pendingRequestCount > 0 && (
+                  <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
+                    {pendingRequestCount}
+                  </span>
+                )}
+              </Link>
+            </>
           )}
-        </div>
-      </nav>
+          {session && !inAdmin && (
+            <>
+              <Link
+                href="/"
+                className="hover:underline hover:text-gray-300"
+                onClick={() => setOpen(false)}
+              >
+                課題一覧
+              </Link>
+              <Link
+                href="/settings"
+                className="hover:underline hover:text-gray-300"
+                onClick={() => setOpen(false)}
+              >
+                設定
+              </Link>
+            </>
+          )}
+          <div>
+            {session ? (
+              <SignOutButton />
+            ) : (
+              <Link
+                href="/signin"
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block text-center"
+                onClick={() => setOpen(false)}
+              >
+                サインイン
+              </Link>
+            )}
+          </div>
+        </nav>
+        <button
+          onClick={() => setOpen(false)}
+          className="mt-auto px-4 py-2 rounded border border-white text-white hover:bg-white/20 transition w-full"
+        >
+          閉じる
+        </button>
+      </div>
     </header>
   );
 }
