@@ -44,7 +44,9 @@ export function Header() {
         {/* ブランド */}
         <Link href="/" className="flex items-center hover:opacity-80">
           <Image src={Logo} alt="APA Logo" width={40} height={40} />
-          <span className="ml-2 font-bold text-xl">Agile Practice Assignment</span>
+          <span className="ml-2 font-bold text-xl">
+            Agile Practice Assignment
+          </span>
         </Link>
 
         {/* PC: メニュー＋サインインアウト, SP: ハンバーガー */}
@@ -110,18 +112,32 @@ export function Header() {
 
       {/* スマホメニュー */}
       <div
-        className={`md:hidden fixed inset-0 bg-black/75 z-40 flex flex-col p-4 gap-4 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        className={`md:hidden fixed inset-0 bg-black/85 z-40  flex flex-col items-center p-6 gap-4 transition-opacity duration-300 ${
+          open ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
       >
-        <nav className="flex flex-col gap-4 text-white mt-12">
+        <nav className="flex flex-col gap-6 text-white mt-12 text-2xl">
           {inAdmin && (
             <>
-              <Link href="/admin/assignments" className="hover:underline hover:text-gray-300">
+              <Link
+                href="/admin/assignments"
+                className="hover:underline hover:text-gray-300"
+                onClick={() => setOpen(false)}
+              >
                 課題編集
               </Link>
-              <Link href="/admin/progress" className="hover:underline hover:text-gray-300">
+              <Link
+                href="/admin/progress"
+                className="hover:underline hover:text-gray-300"
+                onClick={() => setOpen(false)}
+              >
                 進捗一覧
               </Link>
-              <Link href="/admin/requests" className="relative">
+              <Link
+                href="/admin/requests"
+                className="relative"
+                onClick={() => setOpen(false)}
+              >
                 休会・退会リクエスト
                 {pendingRequestCount > 0 && (
                   <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
@@ -132,7 +148,11 @@ export function Header() {
             </>
           )}
           {session && !inAdmin && (
-            <Link href="/settings" className="hover:underline hover:text-gray-300">
+            <Link
+              href="/settings"
+              className="hover:underline hover:text-gray-300"
+              onClick={() => setOpen(false)}
+            >
               設定
             </Link>
           )}
@@ -143,6 +163,7 @@ export function Header() {
               <Link
                 href="/signin"
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block text-center"
+                onClick={() => setOpen(false)}
               >
                 サインイン
               </Link>
@@ -151,7 +172,7 @@ export function Header() {
         </nav>
         <button
           onClick={() => setOpen(false)}
-          className="mt-auto px-4 py-2 rounded border border-white text-white hover:bg-white/20 transition"
+          className="mt-auto px-4 py-2 rounded border border-white text-white hover:bg-white/20 transition w-full"
         >
           閉じる
         </button>
