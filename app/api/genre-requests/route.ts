@@ -23,7 +23,7 @@ export async function GET() {
   const result = genres.map((g) => ({
     id: g.id,
     name: g.name,
-    isOpen: g._count.assignments > 0 && g.GenreAccess.length > 0,
+    isOpen: g.GenreAccess.length > 0,
     canRequest: g._count.assignments > 0,
     request: g.AssignmentRequest[0] ?? null, // {status:"PENDING"…} or null
   }));

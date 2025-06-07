@@ -94,7 +94,7 @@ export default function PublicAssignments({ assignments }: Props) {
         })
       )}
       {genreInfo?.map((g) =>
-        g.isOpen || !g.canRequest ? null : (
+        g.canRequest && !g.isOpen ? (
           <div key={g.id} className="my-8 flex items-center gap-4">
             <span className="text-lg font-medium">{g.name}</span>
             {g.request?.status === "PENDING" ? (
@@ -109,7 +109,7 @@ export default function PublicAssignments({ assignments }: Props) {
               </button>
             )}
           </div>
-        )
+        ) : null
       )}
     </section>
   );
