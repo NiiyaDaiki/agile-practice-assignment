@@ -14,6 +14,11 @@ const fetchCount = async () =>
     count: number;
   }>;
 
+const fetchAssignmentCount = async () =>
+  (await fetch("/api/assignment-requests/pending-count")).json() as Promise<{
+    count: number;
+  }>;
+
 export function Header() {
   const { data: session, status } = useSession();
   const pathname = usePathname(); // ★ 現在のパスを取得
@@ -28,7 +33,15 @@ export function Header() {
     staleTime: 30_000, // 30 秒キャッシュ
   });
 
+  const { data: assignmentData } = useQuery({
+    queryKey: ["assignment-pending-count"],
+    queryFn: fetchAssignmentCount,
+    enabled: inAdmin,
+    staleTime: 30_000,
+  });
+
   const pendingRequestCount = data?.count ?? 0;
+  const pendingAssignmentRequestCount = assignmentData?.count ?? 0;
 
   if (status === "loading") {
     return (
@@ -71,6 +84,14 @@ export function Header() {
                   {pendingRequestCount > 0 && (
                     <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
                       {pendingRequestCount}
+                    </span>
+                  )}
+                </Link>
+                <Link href="/admin/assignment-requests" className="relative">
+                  課題公開リクエスト
+                  {pendingAssignmentRequestCount > 0 && (
+                    <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
+                      {pendingAssignmentRequestCount}
                     </span>
                   )}
                 </Link>
@@ -147,6 +168,18 @@ export function Header() {
                 {pendingRequestCount > 0 && (
                   <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
                     {pendingRequestCount}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href="/admin/assignment-requests"
+                className="relative"
+                onClick={() => setOpen(false)}
+              >
+                課題公開リクエスト
+                {pendingAssignmentRequestCount > 0 && (
+                  <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
+                    {pendingAssignmentRequestCount}
                   </span>
                 )}
               </Link>
