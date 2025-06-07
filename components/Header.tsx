@@ -8,6 +8,8 @@ import { useState } from "react";
 import { SignOutButton } from "./SignOutButton";
 import Logo from "@/public/logo.png";
 import { useQuery } from "@tanstack/react-query";
+import { buttonVariants } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 const fetchCount = async () =>
   (await fetch("/api/requests/pending-count")).json() as Promise<{
@@ -32,14 +34,14 @@ export function Header() {
 
   if (status === "loading") {
     return (
-      <header className="p-4 bg-black text-white">
+      <header className="p-4 bg-gradient-to-r from-primary via-accent to-secondary text-white">
         <p>Loading...</p>
       </header>
     );
   }
 
   return (
-    <header className="p-4 bg-black text-white relative">
+    <header className="sticky top-0 z-50 p-4 bg-gradient-to-r from-primary via-accent to-secondary text-white relative shadow">
       <div className="flex justify-between items-center">
         {/* ブランド */}
         <Link href="/" className="flex items-center hover:opacity-80">
@@ -88,10 +90,7 @@ export function Header() {
             {session ? (
               <SignOutButton />
             ) : (
-              <Link
-                href="/signin"
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-              >
+              <Link href="/signin" className={buttonVariants()}>
                 サインイン
               </Link>
             )}
@@ -99,18 +98,22 @@ export function Header() {
 
           {/* ハンバーガー */}
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 transition-transform"
             onClick={() => setOpen((o) => !o)}
             aria-label="メニューを開閉"
           >
-            {open ? <X className="size-6" /> : <Menu className="size-6" />}
+            {open ? (
+              <X className="size-6 rotate-90 transition-transform" />
+            ) : (
+              <Menu className="size-6" />
+            )}
           </button>
         </div>
       </div>
 
       {/* スマホメニュー */}
       <nav
-        className={`md:hidden mt-2 flex flex-col gap-2 ${open ? "" : "hidden"}`}
+        className={`md:hidden mt-2 flex flex-col gap-2 transition-opacity ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       >
         {inAdmin && (
           <>
@@ -150,7 +153,7 @@ export function Header() {
           ) : (
             <Link
               href="/signin"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition block text-center"
+              className={cn(buttonVariants(), "block text-center")}
             >
               サインイン
             </Link>
