@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { unstable_ViewTransition as ViewTransition } from "react";
 import { GENRE_STYLE, DEFAULT_STYLE } from "@/lib/constants";
+import { CheckCircle } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type PublicAssignment = {
@@ -9,6 +10,7 @@ export type PublicAssignment = {
   title: string;
   genre: string;
   excerpt: string;
+  status: string;
 };
 
 interface Props {
@@ -77,8 +79,15 @@ export default function PublicAssignments({ assignments }: Props) {
                   >
                     <Link
                       href={`/assignments/${a.id}`}
-                      className={`w-72 shadow hover:shadow-md p-6 rounded-lg shrink-0 border-l-4  ${style.border}`}
+                      className={`relative w-72 shadow hover:shadow-md p-6 rounded-lg shrink-0 border-l-4  ${style.border}`}
                     >
+                      {a.status === "DONE" && (
+                        <span
+                          className="absolute top-2 right-2 flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded bg-green-500 text-white"
+                        >
+                          <CheckCircle className="w-4 h-4" /> 完了
+                        </span>
+                      )}
                       <h3 className="text-xl font-medium mb-2 truncate">
                         {a.title}
                       </h3>

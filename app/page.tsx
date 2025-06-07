@@ -31,7 +31,13 @@ export default async function HomePage() {
       isPublic: true,
       genre: { GenreAccess: { some: { userId: session.user.id } } },
     },
-    include: { genre: true },
+    include: {
+      genre: true,
+      assignmentProgress: {
+        where: { userId: session.user.id },
+        select: { status: true },
+      },
+    },
     orderBy: [{ genre: { order: "asc" } }, { createdAt: "asc" }],
   });
 
@@ -41,6 +47,7 @@ export default async function HomePage() {
     title: a.title,
     genre: a.genre?.name ?? "未分類",
     excerpt: a.content.length > 100 ? `${a.content.slice(0, 100)}…` : a.content,
+    status: a.assignmentProgress[0]?.status ?? "NOT_STARTED",
   }));
 
   return <PublicAssignments assignments={assignments} />;
