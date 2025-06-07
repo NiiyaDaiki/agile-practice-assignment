@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import PublicAssignments from "@/components/PublicAssignments";
+import { ProgressStatus } from "@/lib/constants";
 
 export default async function HomePage() {
   const session = await auth();
@@ -47,7 +48,7 @@ export default async function HomePage() {
     title: a.title,
     genre: a.genre?.name ?? "未分類",
     excerpt: a.content.length > 100 ? `${a.content.slice(0, 100)}…` : a.content,
-    status: a.assignmentProgress[0]?.status ?? "NOT_STARTED",
+    status: (a.assignmentProgress[0]?.status ?? "NOT_STARTED") as ProgressStatus,
   }));
 
   return <PublicAssignments assignments={assignments} />;
