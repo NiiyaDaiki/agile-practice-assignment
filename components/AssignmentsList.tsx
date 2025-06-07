@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { GENRE_STYLE, DEFAULT_STYLE } from "@/lib/constants";
+import { Input } from "@/components/ui/input";
 
 export type Assignment = {
   id: string;
@@ -17,6 +18,7 @@ type Props = {
 
 export default function AssignmentsList({ initialAssignments }: Props) {
   const [assignments, setAssignments] = useState(initialAssignments);
+  const [query, setQuery] = useState("");
 
   const handleDelete = async (id: string) => {
     const res = await fetch(`/api/assignments/${id}`, { method: "DELETE" });
@@ -26,6 +28,10 @@ export default function AssignmentsList({ initialAssignments }: Props) {
       console.error("Failed to delete", await res.text());
     }
   };
+
+  const filtered = assignments.filter((a) =>
+    a.title.toLowerCase().includes(query.toLowerCase())
+  );
 
   return (
     <div className="max-w-2xl mx-auto p-4">
@@ -39,11 +45,20 @@ export default function AssignmentsList({ initialAssignments }: Props) {
         </Link>
       </div>
 
-      {assignments.length === 0 ? (
+      <div className="mb-4">
+        <Input
+          type="search"
+          placeholder="タイトル検索"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+
+      {filtered.length === 0 ? (
         <p className="text-center text-gray-500">課題がありません</p>
       ) : (
         <ul className="space-y-4">
-          {assignments.map((a) => {
+          {filtered.map((a) => {
             const style = GENRE_STYLE[a.genre ?? ""] ?? DEFAULT_STYLE;
             return (
               <li
