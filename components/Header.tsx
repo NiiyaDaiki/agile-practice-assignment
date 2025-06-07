@@ -149,6 +149,12 @@ export function Header() {
             )}
           </div>
         </nav>
+        <button
+          onClick={() => setOpen(false)}
+          className="mt-auto px-4 py-2 rounded border border-white text-white hover:bg-white/20 transition"
+        >
+          閉じる
+        </button>
       </div>
     </header>
   );
