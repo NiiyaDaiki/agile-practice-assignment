@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
-import { approve, reject } from "./actions";
 import Row, { FullAssignmentRequest } from "./components/Row";
 
 export default async function AdminAssignmentRequestsPage() {

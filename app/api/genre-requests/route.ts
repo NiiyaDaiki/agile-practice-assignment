@@ -24,6 +24,7 @@ export async function GET() {
     id: g.id,
     name: g.name,
     isOpen: g._count.assignments > 0 && g.GenreAccess.length > 0,
+    canRequest: g._count.assignments > 0,
     request: g.AssignmentRequest[0] ?? null, // {status:"PENDING"…} or null
   }));
 
@@ -36,6 +37,14 @@ export async function POST(req: Request) {
   if (!session?.user?.id) return NextResponse.json({}, { status: 401 });
 
   const { genreId } = await req.json();
+
+  // 公開されている課題が一つもない場合はリクエスト不可
+  const publicCount = await prisma.assignment.count({
+    where: { genreId, isPublic: true },
+  });
+  if (publicCount === 0)
+    return NextResponse.json({}, { status: 400 });
+
   // 既にPENDINGがあるなら409
   const dup = await prisma.assignmentRequest.findFirst({
     where: { userId: session.user.id, genreId, status: { in: ["PENDING", "APPROVED"] }, },
