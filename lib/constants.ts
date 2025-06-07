@@ -57,9 +57,9 @@ export const GENRE_STYLE: Record<
     text: "text-rose-600",
   },
   テスト: {
-    bg: "bg-emerald-600",
-    border: "border-emerald-500",
-    text: "text-emerald-600",
+    bg: "bg-cyan-600",
+    border: "border-cyan-500",
+    text: "text-cyan-600",
   },
 };
 
