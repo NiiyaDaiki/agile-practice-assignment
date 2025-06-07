@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 import { approve, reject } from "./actions";
+import Row, { FullAssignmentRequest } from "./components/Row";
 
 export default async function AdminAssignmentRequestsPage() {
   /* 認証チェック（簡易） */
@@ -15,7 +16,7 @@ export default async function AdminAssignmentRequestsPage() {
     orderBy: { createdAt: "asc" },
     include: {
       user: { select: { name: true, email: true } },
-      genre: true,
+      genre: { select: { name: true } },
     },
   });
 
@@ -36,53 +37,7 @@ export default async function AdminAssignmentRequestsPage() {
 
         <tbody>
           {requests.map((r) => (
-            <tr key={r.id} className="border-b">
-              {/* 受講生 */}
-              <td className="border px-3 py-2">
-                {r.user.name ?? r.user.email}
-              </td>
-
-              {/* ジャンル */}
-              <td className="border px-3 py-2">{r.genre.name}</td>
-
-              {/* 申請日時 */}
-              <td className="border px-3 py-2">
-                {r.createdAt.toLocaleString()}
-              </td>
-
-              {/* ステータス */}
-              <td className="border px-3 py-2">
-                {
-                  {
-                    PENDING: <span className="text-yellow-600">未処理</span>,
-                    APPROVED: <span className="text-green-600">承認済み</span>,
-                    REJECTED: <span className="text-gray-500">却下</span>,
-                  }[r.status]
-                }
-              </td>
-
-              {/* 操作ボタン */}
-              <td className="border px-3 py-2">
-                {r.status === "PENDING" && (
-                  <div className="flex gap-1 justify-center">
-                    <form action={approve}>
-                      <input type="hidden" name="id" value={r.id} />
-                      <input type="hidden" name="genreId" value={r.genreId} />
-                      <button className="px-2 py-1 bg-green-500 text-white rounded text-xs">
-                        承認
-                      </button>
-                    </form>
-
-                    <form action={reject}>
-                      <input type="hidden" name="id" value={r.id} />
-                      <button className="px-2 py-1 bg-gray-400 text-white rounded text-xs">
-                        却下
-                      </button>
-                    </form>
-                  </div>
-                )}
-              </td>
-            </tr>
+            <Row key={r.id} r={r as FullAssignmentRequest} />
           ))}
         </tbody>
       </table>
