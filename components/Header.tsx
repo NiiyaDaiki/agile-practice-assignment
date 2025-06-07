@@ -64,7 +64,7 @@ export function Header() {
 
         {/* PC: メニュー＋サインインアウト, SP: ハンバーガー */}
         <div className="flex items-center">
-          <nav className="hidden md:flex items-center space-x-6 mr-4">
+          <nav className="hidden md:flex items-center space-x-6 mr-6">
             {inAdmin && (
               <>
                 <Link
