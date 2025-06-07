@@ -42,6 +42,8 @@ export function Header() {
 
   const pendingRequestCount = data?.count ?? 0;
   const pendingAssignmentRequestCount = assignmentData?.count ?? 0;
+  const shouldShowBadge =
+    pendingAssignmentRequestCount + pendingRequestCount > 0;
 
   if (status === "loading") {
     return (
@@ -131,7 +133,18 @@ export function Header() {
             onClick={() => setOpen((o) => !o)}
             aria-label="メニューを開閉"
           >
-            {open ? <X className="size-6" /> : <Menu className="size-6" />}
+            {open ? (
+              <X className="size-6" />
+            ) : (
+              <div className="relative">
+                <Menu className="size-6 " />
+                {shouldShowBadge && (
+                  <div className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full px-2">
+                    {pendingAssignmentRequestCount + pendingRequestCount}
+                  </div>
+                )}
+              </div>
+            )}
           </button>
         </div>
       </div>
