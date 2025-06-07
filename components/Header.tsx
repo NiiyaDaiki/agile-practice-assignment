@@ -77,12 +77,17 @@ export function Header() {
               </>
             )}
             {session && !inAdmin && (
-              <Link
-                href="/settings"
-                className="hover:underline hover:text-gray-300"
-              >
-                設定
-              </Link>
+              <div className="space-x-6">
+                <Link href="/" className="hover:underline hover:text-gray-300">
+                  課題一覧
+                </Link>
+                <Link
+                  href="/settings"
+                  className="hover:underline hover:text-gray-300"
+                >
+                  設定
+                </Link>
+              </div>
             )}
           </nav>
 
@@ -116,7 +121,7 @@ export function Header() {
           open ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
-        <nav className="flex flex-col gap-6 text-white mt-12 text-2xl">
+        <nav className="flex flex-col gap-6 items-center text-white mt-12 text-2xl">
           {inAdmin && (
             <>
               <Link
@@ -148,13 +153,22 @@ export function Header() {
             </>
           )}
           {session && !inAdmin && (
-            <Link
-              href="/settings"
-              className="hover:underline hover:text-gray-300"
-              onClick={() => setOpen(false)}
-            >
-              設定
-            </Link>
+            <>
+              <Link
+                href="/"
+                className="hover:underline hover:text-gray-300"
+                onClick={() => setOpen(false)}
+              >
+                課題一覧
+              </Link>
+              <Link
+                href="/settings"
+                className="hover:underline hover:text-gray-300"
+                onClick={() => setOpen(false)}
+              >
+                設定
+              </Link>
+            </>
           )}
           <div>
             {session ? (
