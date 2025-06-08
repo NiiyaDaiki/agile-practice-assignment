@@ -76,7 +76,10 @@ export default function PublicAssignments({ assignments }: Props) {
               </h2>
 
               {/* 横スクロールコンテナ */}
-              <div className="flex gap-4 overflow-x-auto scroll-smooth pb-2">
+              <div
+                className="flex gap-4 overflow-x-auto scroll-smooth pb-2"
+                data-scroll-key={`list-${genre}`}
+              >
                 {list.map((a) => (
                   <ViewTransition
                     key={`assignment-${a.id}`}
