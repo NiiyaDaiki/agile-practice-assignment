@@ -50,12 +50,23 @@ export default function AdminProgressTable({
                       {a.title}
                     </th>
                   ))}
+                  <th className="border px-3 py-2 whitespace-nowrap text-center">
+                    完了/未着手
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((u) => {
                   const map = Object.fromEntries(
                     u.assignmentProgress.map((p) => [p.assignmentId, p.status])
+                  );
+                  const { done, notStarted } = u.assignmentProgress.reduce(
+                    (acc, p) => {
+                      if (p.status === "DONE") acc.done++;
+                      if (p.status === "NOT_STARTED") acc.notStarted++;
+                      return acc;
+                    },
+                    { done: 0, notStarted: 0 }
                   );
                   return (
                     <tr key={u.id}>
@@ -75,6 +86,9 @@ export default function AdminProgressTable({
                           </td>
                         );
                       })}
+                      <td className="border px-3 py-2 whitespace-nowrap text-center">
+                        {done}/{notStarted}
+                      </td>
                     </tr>
                   );
                 })}
