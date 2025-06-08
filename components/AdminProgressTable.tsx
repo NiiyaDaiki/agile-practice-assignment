@@ -78,10 +78,16 @@ export default function AdminProgressTable({
 
   return (
     <div className="space-y-4">
-      <label className="flex items-center gap-2">
-        <span className="text-sm">ジャンル別表示</span>
-        <Switch checked={byGenre} onCheckedChange={setByGenre} />
-      </label>
+      <div className="flex items-center gap-2">
+        <span id="genre-toggle-label" className="text-sm">
+          ジャンル別表示
+        </span>
+        <Switch
+          aria-labelledby="genre-toggle-label"
+          checked={byGenre}
+          onCheckedChange={setByGenre}
+        />
+      </div>
       {byGenre ? (
         Object.entries(grouped).map(([genre, list]) => {
           const style = GENRE_STYLE[genre] ?? DEFAULT_STYLE;
