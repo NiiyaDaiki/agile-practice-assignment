@@ -1,66 +1,54 @@
 "use client";
 import { useEffect } from "react";
 
+const STORAGE_KEY = "scroll-store";
+
 export default function ScrollRestorer() {
   useEffect(() => {
     const nav = window.navigation;
     if (!nav) return; // API 非対応ブラウザ
 
-    const store = new Map<
-      string,
-      { y: number; x: Record<string, number> }
-    >(); // pathname+search → scroll positions
+    const readStore = () => {
+      try {
+        return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "{}") as Record<
+          string,
+          { y: number; x: Record<string, number> }
+        >;
+      } catch {
+        return {};
+      }
+    };
+
+    const writeStore = (data: Record<string, { y: number; x: Record<string, number> }>) => {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    };
+
+    let store = readStore();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onNavigate = (event: any) => {
       // TODO: 型定義が存在しないため any を利用
       const fromKey = location.pathname + location.search;
       const x: Record<string, number> = {};
-      document
-        .querySelectorAll<HTMLElement>("[data-scroll-key]")
-        .forEach((el) => {
-          const key = el.dataset.scrollKey;
-          if (key) x[key] = el.scrollLeft;
-        });
-      store.set(fromKey, { y: window.scrollY, x });
+      document.querySelectorAll<HTMLElement>("[data-scroll-key]").forEach((el) => {
+        const key = el.dataset.scrollKey;
+        if (key) x[key] = el.scrollLeft;
+      });
+      store[fromKey] = { y: window.scrollY, x };
+      writeStore(store);
 
-      /* ---- View-Transition が無い遷移 ---- */
+      const restoreY = () => {
+        const toKey = location.pathname + location.search;
+        store = readStore();
+        window.scrollTo(0, store[toKey]?.y ?? 0);
+      };
+
       if (!event.transition) {
-        // 1 フレーム後に即復元
-        requestAnimationFrame(() => {
-          const toKey = location.pathname + location.search;
-          const state = store.get(toKey);
-          if (state) {
-            window.scrollTo(0, state.y);
-            Object.entries(state.x).forEach(([key, left]) => {
-              const el = document.querySelector<HTMLElement>(
-                `[data-scroll-key="${key}"]`
-              );
-              if (el) el.scrollLeft = left;
-            });
-          } else {
-            window.scrollTo(0, 0);
-          }
-        });
+        requestAnimationFrame(restoreY);
         return;
       }
 
-      /* ---- View-Transition あり ---- */
-      event.transition.finished.finally(() => {
-        const toKey = location.pathname + location.search;
-        const state = store.get(toKey);
-        const y = state?.y ?? 0;
-        const xMap = state?.x ?? {};
-        requestAnimationFrame(() => {
-          window.scrollTo(0, y);
-          Object.entries(xMap).forEach(([key, left]) => {
-            const el = document.querySelector<HTMLElement>(
-              `[data-scroll-key="${key}"]`
-            );
-            if (el) el.scrollLeft = left;
-          });
-        });
-      });
+      event.transition.finished.finally(() => requestAnimationFrame(restoreY));
     };
 
     nav.addEventListener("navigate", onNavigate);
