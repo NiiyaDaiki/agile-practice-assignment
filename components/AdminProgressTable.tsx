@@ -2,10 +2,10 @@
 
 import {
   STATUS_INFO,
-  ProgressStatus,
   GENRE_STYLE,
   DEFAULT_STYLE,
 } from "@/lib/constants";
+import type { ProgressStatus } from "@/lib/constants";
 
 type Assignment = { id: string; title: string; genre: string };
 type Progress = { assignmentId: string; status: ProgressStatus };
@@ -29,12 +29,16 @@ export default function AdminProgressTable({
   }, {});
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {Object.entries(grouped).map(([genre, list]) => {
         const style = GENRE_STYLE[genre] ?? DEFAULT_STYLE;
         return (
-          <div key={genre} className="overflow-auto">
-            <h2 className={`font-semibold mb-2 ${style.text}`}>{genre}</h2>
+          <details key={genre} className="overflow-auto border rounded">
+            <summary
+              className={`px-2 py-1 mb-2 cursor-pointer select-none font-semibold ${style.text}`}
+            >
+              {genre}
+            </summary>
             <table className="min-w-full border border-gray-300 text-sm">
               <thead className="bg-gray-100 sticky top-0">
                 <tr>
@@ -76,7 +80,7 @@ export default function AdminProgressTable({
                 })}
               </tbody>
             </table>
-          </div>
+          </details>
         );
       })}
     </div>
