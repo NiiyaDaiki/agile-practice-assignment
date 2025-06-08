@@ -3,7 +3,6 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import PublicAssignments from "@/components/PublicAssignments";
-import { ProgressStatus } from "@/lib/constants";
 
 export default async function HomePage() {
   const session = await auth();

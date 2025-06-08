@@ -9,9 +9,15 @@ export default async function AdminProgressPage() {
 
   /* 課題一覧 */
   const assignments = await prisma.assignment.findMany({
-    select: { id: true, title: true },
-    orderBy: { title: "asc" },
+    include: { genre: true },
+    orderBy: [{ genre: { order: "asc" } }, { title: "asc" }],
   });
+
+  const formattedAssignments = assignments.map((a) => ({
+    id: a.id,
+    title: a.title,
+    genre: a.genre?.name ?? "未分類",
+  }));
 
   /* 全ユーザー＋進捗 */
   const users = await prisma.user.findMany({
@@ -29,7 +35,7 @@ export default async function AdminProgressPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">受講生 × 課題 進捗一覧</h1>
-      <AdminProgressTable assignments={assignments} users={users} />
+      <AdminProgressTable assignments={formattedAssignments} users={users} />
     </div>
   );
 }
