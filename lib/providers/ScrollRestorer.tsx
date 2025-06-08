@@ -1,15 +1,12 @@
 "use client";
-import { useLayoutEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useLayoutEffect } from "react";
 
 const STORAGE_KEY = "scroll-store";
 
 export default function ScrollRestorer() {
-  const pathname = usePathname();
-  const search = useSearchParams();
-  const key = pathname + search.toString();
-
+  // restore vertical scroll on mount
   useLayoutEffect(() => {
+    const key = location.pathname + location.search;
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (raw) {
@@ -22,21 +19,33 @@ export default function ScrollRestorer() {
     } catch {
       // ignore restore errors
     }
-    return () => {
+  }, []);
+
+  // store vertical scroll before navigating away
+  useEffect(() => {
+    const nav = window.navigation;
+    if (!nav) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const onNavigate = (_event: any) => {
+      const fromKey = location.pathname + location.search;
       try {
         const raw = sessionStorage.getItem(STORAGE_KEY);
         const store = raw
           ? (JSON.parse(raw) as Record<string, { y?: number; x?: Record<string, number> }>)
           : {};
-        const entry = store[key] ?? { x: {} };
+        const entry = store[fromKey] ?? { x: {} };
         entry.y = window.scrollY;
-        store[key] = entry;
+        store[fromKey] = entry;
         sessionStorage.setItem(STORAGE_KEY, JSON.stringify(store));
       } catch {
         // ignore save errors
       }
     };
-  }, [key]);
+
+    nav.addEventListener("navigate", onNavigate);
+    return () => nav.removeEventListener("navigate", onNavigate);
+  }, []);
 
   return null;
 }
