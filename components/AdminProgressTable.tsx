@@ -38,7 +38,9 @@ export default function AdminProgressTable({
     <table className="min-w-full border border-gray-300 text-sm">
       <thead className="bg-gray-100 sticky top-0">
         <tr>
-          <th className="border px-3 py-2 whitespace-nowrap text-left">受講生</th>
+          <th className="border px-3 py-2 whitespace-nowrap text-left">
+            受講生
+          </th>
           {list.map((a) => (
             <th key={a.id} className="border px-3 py-2 whitespace-nowrap">
               {a.title}
