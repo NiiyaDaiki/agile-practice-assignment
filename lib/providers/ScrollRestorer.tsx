@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 const STORAGE_KEY = "scroll-store";
@@ -8,13 +8,18 @@ export default function ScrollRestorer() {
   const pathname = usePathname();
   const search = useSearchParams();
   const key = pathname + search.toString();
+  const keyRef = useRef(key);
 
   // restore scroll position for the current route
   useLayoutEffect(() => {
+    keyRef.current = key;
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const store = JSON.parse(raw) as Record<string, { y?: number; x?: Record<string, number> }>;
+        const store = JSON.parse(raw) as Record<
+          string,
+          { y?: number; x?: Record<string, number> }
+        >;
         const y = store[key]?.y;
         if (typeof y === "number") {
           window.scrollTo(0, y);
@@ -33,7 +38,12 @@ export default function ScrollRestorer() {
         const fromKey = location.pathname + location.search;
         try {
           const raw = sessionStorage.getItem(STORAGE_KEY);
-          const store = raw ? (JSON.parse(raw) as Record<string, { y?: number; x?: Record<string, number> }>) : {};
+          const store = raw
+            ? (JSON.parse(raw) as Record<
+                string,
+                { y?: number; x?: Record<string, number> }
+              >)
+            : {};
           const prev = store[fromKey];
           const entry = { x: prev?.x ?? {}, y: window.scrollY };
           store[fromKey] = entry;
@@ -47,7 +57,10 @@ export default function ScrollRestorer() {
             const toKey = location.pathname + location.search;
             const raw = sessionStorage.getItem(STORAGE_KEY);
             if (raw) {
-              const store = JSON.parse(raw) as Record<string, { y?: number; x?: Record<string, number> }>;
+              const store = JSON.parse(raw) as Record<
+                string,
+                { y?: number; x?: Record<string, number> }
+              >;
               const y = store[toKey]?.y;
               if (typeof y === "number") {
                 window.scrollTo(0, y);
@@ -59,7 +72,9 @@ export default function ScrollRestorer() {
         };
 
         if (event.transition) {
-          event.transition.finished.finally(() => requestAnimationFrame(restore));
+          event.transition.finished.finally(() =>
+            requestAnimationFrame(restore),
+          );
         } else {
           requestAnimationFrame(restore);
         }
@@ -71,11 +86,17 @@ export default function ScrollRestorer() {
     // fallback when Navigation API is unavailable
     return () => {
       try {
+        const currentKey = keyRef.current;
         const raw = sessionStorage.getItem(STORAGE_KEY);
-        const store = raw ? (JSON.parse(raw) as Record<string, { y?: number; x?: Record<string, number> }>) : {};
-        const prev = store[key];
+        const store = raw
+          ? (JSON.parse(raw) as Record<
+              string,
+              { y?: number; x?: Record<string, number> }
+            >)
+          : {};
+        const prev = store[currentKey];
         const entry = { x: prev?.x ?? {}, y: window.scrollY };
-        store[key] = entry;
+        store[currentKey] = entry;
         sessionStorage.setItem(STORAGE_KEY, JSON.stringify(store));
       } catch {
         // ignore save errors
