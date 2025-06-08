@@ -1,4 +1,5 @@
 import { useLayoutEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const STORAGE_KEY = "scroll-store";
 
@@ -6,8 +7,11 @@ export default function useHorizontalScrollRestore<T extends HTMLElement>(
   key: string,
   ref: React.RefObject<T>
 ) {
+  const pathname = usePathname();
+  const search = useSearchParams();
+  const routeKey = pathname + search.toString();
+
   useLayoutEffect(() => {
-    const routeKey = location.pathname + location.search;
     const element = ref.current;
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
@@ -38,5 +42,5 @@ export default function useHorizontalScrollRestore<T extends HTMLElement>(
         // ignore write error
       }
     };
-  }, [key, ref]);
+  }, [key, ref, routeKey]);
 }
