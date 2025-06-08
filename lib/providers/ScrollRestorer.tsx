@@ -1,59 +1,38 @@
 "use client";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const STORAGE_KEY = "scroll-store";
 
 export default function ScrollRestorer() {
-  useEffect(() => {
-    const nav = window.navigation;
-    if (!nav) return; // API 非対応ブラウザ
+  const pathname = usePathname();
+  const search = useSearchParams();
+  const key = pathname + search.toString();
 
-    const readStore = () => {
+  useLayoutEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const store = JSON.parse(raw) as Record<string, { y: number }>;
+        const y = store[key]?.y;
+        if (typeof y === "number") {
+          window.scrollTo(0, y);
+        }
+      }
+    } catch {
+      // ignore restore errors
+    }
+    return () => {
       try {
-        return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "{}") as Record<
-          string,
-          { y: number; x: Record<string, number> }
-        >;
+        const raw = sessionStorage.getItem(STORAGE_KEY);
+        const store = raw ? (JSON.parse(raw) as Record<string, { y: number }>) : {};
+        store[key] = { y: window.scrollY };
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(store));
       } catch {
-        return {};
+        // ignore save errors
       }
     };
-
-    const writeStore = (data: Record<string, { y: number; x: Record<string, number> }>) => {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    };
-
-    let store = readStore();
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const onNavigate = (event: any) => {
-      // TODO: 型定義が存在しないため any を利用
-      const fromKey = location.pathname + location.search;
-      const x: Record<string, number> = {};
-      document.querySelectorAll<HTMLElement>("[data-scroll-key]").forEach((el) => {
-        const key = el.dataset.scrollKey;
-        if (key) x[key] = el.scrollLeft;
-      });
-      store[fromKey] = { y: window.scrollY, x };
-      writeStore(store);
-
-      const restoreY = () => {
-        const toKey = location.pathname + location.search;
-        store = readStore();
-        window.scrollTo(0, store[toKey]?.y ?? 0);
-      };
-
-      if (!event.transition) {
-        requestAnimationFrame(restoreY);
-        return;
-      }
-
-      event.transition.finished.finally(() => requestAnimationFrame(restoreY));
-    };
-
-    nav.addEventListener("navigate", onNavigate);
-    return () => nav.removeEventListener("navigate", onNavigate);
-  }, []);
+  }, [key]);
 
   return null;
 }
