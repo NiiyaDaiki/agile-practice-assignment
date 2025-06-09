@@ -3,6 +3,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import QueryProvider from "@/lib/providers/QueryClientProvider";
 import ScrollRestorer from "@/lib/providers/ScrollRestorer";
+import { Suspense } from "react";
 
 export default function RootLayout({
   children,
@@ -14,7 +15,9 @@ export default function RootLayout({
       <body className="h-dvh">
         <QueryProvider>
           <SessionProvider>
-            <ScrollRestorer />
+            <Suspense fallback={<>ScrollRestorer Fallback</>}>
+              <ScrollRestorer />
+            </Suspense>
             <Header />
             {children}
           </SessionProvider>

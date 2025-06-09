@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import { unstable_ViewTransition as ViewTransition, useRef } from "react";
+import useHorizontalScrollRestore from "@/lib/hooks/useHorizontalScrollRestore";
 import {
   GENRE_STYLE,
   DEFAULT_STYLE,
@@ -29,6 +30,51 @@ type GenreInfo = {
   canRequest: boolean;
   request: { status: "PENDING" } | null;
 };
+
+function GenreBlock({
+  genre,
+  list,
+}: {
+  genre: string;
+  list: PublicAssignment[];
+}) {
+  const style = GENRE_STYLE[genre] ?? DEFAULT_STYLE;
+  const ref = useRef<HTMLDivElement>(null);
+  useHorizontalScrollRestore(`list-${genre}`, ref);
+  return (
+    <div className="mb-12">
+      <h2 className={`text-2xl font-semibold mb-4 ${style.text}`}>{genre}</h2>
+      <div
+        ref={ref}
+        className="flex gap-4 overflow-x-auto scroll-smooth pb-2"
+        data-scroll-key={`list-${genre}`}
+      >
+        {list.map((a) => (
+          <ViewTransition
+            key={`assignment-${a.id}`}
+            name={`assignment-${a.id}`}
+          >
+            <Link
+              href={`/assignments/${a.id}`}
+              className={`relative w-72 shadow hover:shadow-md p-6 rounded-lg shrink-0 border-l-4  ${style.border}`}
+            >
+              <span
+                className={`absolute top-1 right-1 flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded ${
+                  STATUS_INFO[a.status].bg
+                } ${STATUS_INFO[a.status].text}`}
+              >
+                {a.status === "DONE" && <CheckCircle className="w-4 h-4" />}
+                {STATUS_INFO[a.status].label}
+              </span>
+              <h3 className="text-xl font-medium mb-2 truncate">{a.title}</h3>
+              <p className="text-gray-700 text-sm line-clamp-3">{a.excerpt}</p>
+            </Link>
+          </ViewTransition>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function PublicAssignments({ assignments }: Props) {
   const qc = useQueryClient();
@@ -67,48 +113,9 @@ export default function PublicAssignments({ assignments }: Props) {
         </p>
       ) : (
         /* ---------- 各ジャンル ---------- */
-        Object.entries(grouped).map(([genre, list]) => {
-          const style = GENRE_STYLE[genre] ?? DEFAULT_STYLE;
-          return (
-            <div key={genre} className="mb-12">
-              <h2 className={`text-2xl font-semibold mb-4 ${style.text}`}>
-                {genre}
-              </h2>
-
-              {/* 横スクロールコンテナ */}
-              <div className="flex gap-4 overflow-x-auto scroll-smooth pb-2">
-                {list.map((a) => (
-                  <ViewTransition
-                    key={`assignment-${a.id}`}
-                    name={`assignment-${a.id}`}
-                  >
-                    <Link
-                      href={`/assignments/${a.id}`}
-                      className={`relative w-72 shadow hover:shadow-md p-6 rounded-lg shrink-0 border-l-4  ${style.border}`}
-                    >
-                      <span
-                        className={`absolute top-1 right-1 flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded ${
-                          STATUS_INFO[a.status].bg
-                        } ${STATUS_INFO[a.status].text}`}
-                      >
-                        {a.status === "DONE" && (
-                          <CheckCircle className="w-4 h-4" />
-                        )}
-                        {STATUS_INFO[a.status].label}
-                      </span>
-                      <h3 className="text-xl font-medium mb-2 truncate">
-                        {a.title}
-                      </h3>
-                      <p className="text-gray-700 text-sm line-clamp-3">
-                        {a.excerpt}
-                      </p>
-                    </Link>
-                  </ViewTransition>
-                ))}
-              </div>
-            </div>
-          );
-        })
+        Object.entries(grouped).map(([genre, list]) => (
+          <GenreBlock key={genre} genre={genre} list={list} />
+        ))
       )}
       {genreInfo?.map((g) =>
         g.canRequest && !g.isOpen ? (
