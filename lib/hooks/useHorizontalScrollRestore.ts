@@ -17,10 +17,7 @@ export default function useHorizontalScrollRestore<T extends HTMLElement>(
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (raw && element) {
-        const store = JSON.parse(raw) as Record<
-          string,
-          { y?: number; x?: Record<string, number> }
-        >;
+        const store = JSON.parse(raw) as Record<string, { x?: Record<string, number> }>;
         const left = store[routeKey]?.x?.[key];
         if (typeof left === "number") {
           const original = element.style.scrollBehavior;
