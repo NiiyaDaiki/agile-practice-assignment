@@ -5,7 +5,7 @@ const STORAGE_KEY = "scroll-store";
 
 export default function useHorizontalScrollRestore<T extends HTMLElement>(
   key: string,
-  ref: React.RefObject<T> | null,
+  ref: React.RefObject<T | null>,
 ) {
   const pathname = usePathname();
   const search = useSearchParams();

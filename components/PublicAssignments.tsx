@@ -50,7 +50,10 @@ function GenreBlock({
         data-scroll-key={`list-${genre}`}
       >
         {list.map((a) => (
-          <ViewTransition key={`assignment-${a.id}`} name={`assignment-${a.id}`}>
+          <ViewTransition
+            key={`assignment-${a.id}`}
+            name={`assignment-${a.id}`}
+          >
             <Link
               href={`/assignments/${a.id}`}
               className={`relative w-72 shadow hover:shadow-md p-6 rounded-lg shrink-0 border-l-4  ${style.border}`}
