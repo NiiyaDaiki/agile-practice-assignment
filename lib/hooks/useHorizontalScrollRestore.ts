@@ -5,14 +5,14 @@ const STORAGE_KEY = "scroll-store";
 
 export default function useHorizontalScrollRestore<T extends HTMLElement>(
   key: string,
-  ref: React.RefObject<T>,
+  ref: React.RefObject<T> | null,
 ) {
   const pathname = usePathname();
   const search = useSearchParams();
   const routeKey = pathname + search.toString();
 
   useLayoutEffect(() => {
-    const element = ref.current;
+    const element = ref?.current;
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (raw && element) {
