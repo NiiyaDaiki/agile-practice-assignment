@@ -55,7 +55,9 @@ export default function ScrollRestorer() {
     if (nav?.addEventListener) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const onNavigate = (event: any) => {
-        const fromKey = location.pathname + location.search;
+        const fromUrl = nav.currentEntry?.url ?? location.href;
+        const from = new URL(fromUrl);
+        const fromKey = from.pathname + from.search;
         const capture = () => {
           const x: Record<string, number> = {};
           document
@@ -85,7 +87,9 @@ export default function ScrollRestorer() {
 
         const restore = () => {
           try {
-            const toKey = location.pathname + location.search;
+            const toUrl = event.destination?.url ?? location.href;
+            const to = new URL(toUrl);
+            const toKey = to.pathname + to.search;
             const raw = sessionStorage.getItem(STORAGE_KEY);
             if (raw) {
               const store = JSON.parse(raw) as Record<
