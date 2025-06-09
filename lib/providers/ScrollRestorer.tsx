@@ -7,7 +7,8 @@ const STORAGE_KEY = "scroll-store";
 export default function ScrollRestorer() {
   const pathname = usePathname();
   const search = useSearchParams();
-  const key = pathname + search.toString();
+  const searchStr = search.toString();
+  const key = pathname + (searchStr ? `?${searchStr}` : "");
   const keyRef = useRef(key);
 
   // restore scroll position for the current route
@@ -75,7 +76,10 @@ export default function ScrollRestorer() {
                 >)
               : {};
             const prev = store[fromKey];
-            const entry = { x: { ...(prev?.x ?? {}), ...x }, y: window.scrollY };
+            const entry = {
+              x: { ...(prev?.x ?? {}), ...x },
+              y: window.scrollY,
+            };
             store[fromKey] = entry;
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(store));
           } catch {

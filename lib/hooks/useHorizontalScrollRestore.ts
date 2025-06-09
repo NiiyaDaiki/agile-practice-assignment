@@ -9,7 +9,8 @@ export default function useHorizontalScrollRestore<T extends HTMLElement>(
 ) {
   const pathname = usePathname();
   const search = useSearchParams();
-  const routeKey = pathname + search.toString();
+  const searchStr = search.toString();
+  const routeKey = pathname + (searchStr ? `?${searchStr}` : "");
 
   useLayoutEffect(() => {
     const element = ref?.current;
