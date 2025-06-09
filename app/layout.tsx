@@ -15,7 +15,7 @@ export default function RootLayout({
       <body className="h-dvh">
         <QueryProvider>
           <SessionProvider>
-            <Suspense fallback={null}>
+            <Suspense fallback={<>ScrollRestorer Fallback</>}>
               <ScrollRestorer />
             </Suspense>
             <Header />
