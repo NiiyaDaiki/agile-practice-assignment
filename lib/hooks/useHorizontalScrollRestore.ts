@@ -9,17 +9,15 @@ export default function useHorizontalScrollRestore<T extends HTMLElement>(
 ) {
   const pathname = usePathname();
   const search = useSearchParams();
-  const routeKey = pathname + search.toString();
+  const searchStr = search.toString();
+  const routeKey = pathname + (searchStr ? `?${searchStr}` : "");
 
   useLayoutEffect(() => {
     const element = ref?.current;
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (raw && element) {
-        const store = JSON.parse(raw) as Record<
-          string,
-          { y?: number; x?: Record<string, number> }
-        >;
+        const store = JSON.parse(raw) as Record<string, { y?: number; x?: Record<string, number> }>;
         const left = store[routeKey]?.x?.[key];
         if (typeof left === "number") {
           const original = element.style.scrollBehavior;

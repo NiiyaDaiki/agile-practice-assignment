@@ -7,7 +7,8 @@ const STORAGE_KEY = "scroll-store";
 export default function ScrollRestorer() {
   const pathname = usePathname();
   const search = useSearchParams();
-  const key = pathname + search.toString();
+  const searchStr = search.toString();
+  const key = pathname + (searchStr ? `?${searchStr}` : "");
   const keyRef = useRef(key);
 
   // restore scroll position for the current route
@@ -16,31 +17,26 @@ export default function ScrollRestorer() {
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const store = JSON.parse(raw) as Record<
-          string,
-          { y?: number; x?: Record<string, number> }
-        >;
+        const store = JSON.parse(raw) as Record<string, { y?: number; x?: Record<string, number> }>;
         const entry = store[key];
-        if (entry) {
-          if (typeof entry.y === "number") {
-            window.scrollTo(0, entry.y);
-          }
-          if (entry.x) {
-            requestAnimationFrame(() => {
-              document
-                .querySelectorAll<HTMLElement>("[data-scroll-key]")
-                .forEach((el) => {
-                  const k = el.dataset.scrollKey!;
-                  const left = entry.x?.[k];
-                  if (typeof left === "number") {
-                    const behavior = el.style.scrollBehavior;
-                    el.style.scrollBehavior = "auto";
-                    el.scrollLeft = left;
-                    el.style.scrollBehavior = behavior;
-                  }
-                });
-            });
-          }
+        if (typeof entry?.y === "number") {
+          window.scrollTo(0, entry.y);
+        }
+        if (entry?.x) {
+          requestAnimationFrame(() => {
+            document
+              .querySelectorAll<HTMLElement>("[data-scroll-key]")
+              .forEach((el) => {
+                const k = el.dataset.scrollKey!;
+                const left = entry.x?.[k];
+                if (typeof left === "number") {
+                  const behavior = el.style.scrollBehavior;
+                  el.style.scrollBehavior = "auto";
+                  el.scrollLeft = left;
+                  el.style.scrollBehavior = behavior;
+                }
+              });
+          });
         }
       }
     } catch {
@@ -55,7 +51,9 @@ export default function ScrollRestorer() {
     if (nav?.addEventListener) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const onNavigate = (event: any) => {
-        const fromKey = location.pathname + location.search;
+        const fromUrl = nav.currentEntry?.url ?? location.href;
+        const from = new URL(fromUrl);
+        const fromKey = from.pathname + from.search;
         const capture = () => {
           const x: Record<string, number> = {};
           document
@@ -67,13 +65,13 @@ export default function ScrollRestorer() {
           try {
             const raw = sessionStorage.getItem(STORAGE_KEY);
             const store = raw
-              ? (JSON.parse(raw) as Record<
-                  string,
-                  { y?: number; x?: Record<string, number> }
-                >)
+              ? (JSON.parse(raw) as Record<string, { y?: number; x?: Record<string, number> }>)
               : {};
             const prev = store[fromKey];
-            const entry = { x: { ...(prev?.x ?? {}), ...x }, y: window.scrollY };
+            const entry = {
+              x: { ...(prev?.x ?? {}), ...x },
+              y: window.scrollY,
+            };
             store[fromKey] = entry;
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(store));
           } catch {
@@ -85,16 +83,15 @@ export default function ScrollRestorer() {
 
         const restore = () => {
           try {
-            const toKey = location.pathname + location.search;
+            const toUrl = event.destination?.url ?? location.href;
+            const to = new URL(toUrl);
+            const toKey = to.pathname + to.search;
             const raw = sessionStorage.getItem(STORAGE_KEY);
             if (raw) {
-              const store = JSON.parse(raw) as Record<
-                string,
-                { y?: number; x?: Record<string, number> }
-              >;
+              const store = JSON.parse(raw) as Record<string, { y?: number; x?: Record<string, number> }>;
               const entry = store[toKey];
               if (entry) {
-                if (typeof entry.y === "number") {
+                if (event.navigationType !== "traverse" && typeof entry.y === "number") {
                   window.scrollTo(0, entry.y);
                 }
                 if (entry.x) {
@@ -143,10 +140,7 @@ export default function ScrollRestorer() {
         const currentKey = keyRef.current;
         const raw = sessionStorage.getItem(STORAGE_KEY);
         const store = raw
-          ? (JSON.parse(raw) as Record<
-              string,
-              { y?: number; x?: Record<string, number> }
-            >)
+          ? (JSON.parse(raw) as Record<string, { y?: number; x?: Record<string, number> }>)
           : {};
         const prev = store[currentKey];
         const entry = { x: { ...(prev?.x ?? {}), ...x }, y: window.scrollY };
